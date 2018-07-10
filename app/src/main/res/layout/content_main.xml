@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2f2f2"
+    android:id="@+id/relativeLayout"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
+    tools:context=".MainActivity">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/cover"
+                android:layout_width="match_parent"
+                android:layout_height="285dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:src="@drawable/news"
+                    android:scaleType="centerCrop"/>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="bottom"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:elevation="8dp"
+                    android:layout_marginBottom="10dp">
+
+                    <customfonts.CustomEditText
+                        android:id="@+id/seachNews"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rect"
+                        android:hint="Search..."
+                        android:textColorHint="@color/half_black"
+                        android:textSize="14sp"
+                        android:inputType="text"
+                        android:imeActionLabel="Done"
+                        android:imeOptions="actionDone"
+                        android:textColor="@color/grey"
+                        android:padding="15dp"
+                        android:maxLines="1"
+                        android:drawableRight="@drawable/search"
+                        android:drawableEnd="@drawable/search"
+                        android:elevation="8dp"/>
+
+                </android.support.v7.widget.CardView>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_below="@+id/cover"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2.5dp"
+                    android:background="#db4437"
+                    android:layout_marginLeft="150dp"
+                    android:layout_marginRight="150dp" />
+
+
+                <customfonts.RobotoLightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Recent News"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:textSize="16sp"
+                    android:textColor="#757575"/>
+
+                <customfonts.RobotoLightTextView
+                    android:id="@+id/textViewMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text=""
+                    android:maxLines="2"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    />
+
+
+                    <android.support.v4.widget.SwipeRefreshLayout
+                        android:id="@+id/swipe_refresh_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="fill_parent">
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/my_recycler_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+                            </android.support.v7.widget.RecyclerView>
+
+
+                    </android.support.v4.widget.SwipeRefreshLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+</RelativeLayout>

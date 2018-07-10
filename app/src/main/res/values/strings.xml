@@ -1,0 +1,118 @@
+<resources>
+    <string name="app_name">KNBS</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">KNBS - News </string>
+
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="total">Total</string>
+
+    <string name="enrolment">Enrolment</string>
+    <string name="ger">Ger</string>
+    <string name="ner">Ner</string>
+
+    <string name="public_sector">Public</string>
+    <string name="private_sector">Private</string>
+
+    <string name="development_expenditure">Development Expenditure</string>
+    <string name="recurrent_expenditure">Recurrent Expenditure</string>
+
+    <string name="recovered">Recovered</string>
+    <string name="surrendered">Surrendered</string>
+
+    <string name="expected">Expected</string>
+    <string name="registered">Registered</string>
+    <string name="coverage">Coverage</string>
+
+    <string name="year1">1st Year</string>
+    <string name="year2">2nd Year</string>
+    <string name="year3">3rd Year</string>
+
+    <string name="form1">Form 1</string>
+    <string name="form2">Form 2</string>
+    <string name="form3">Form 3</string>
+    <string name="form4">Form 4</string>
+    <string name="all_levels">All Levels</string>
+
+    <string name="high">High Potential</string>
+    <string name="medium">Medium Potential</string>
+    <string name="low">Low Potential</string>
+    <string name="other">All Other Land</string>
+
+    <string name="kisumu_polytechnic">Kisumu Polytechnic</string>
+    <string name="technical_university_of_kenya">Technical University of Kenya</string>
+    <string name="technical_university_of_mombasa">Technical University of Mombasa</string>
+    <string name="youth_polytechnics">Youth Polytechnics</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="news_message">Sorry, there are no news articles, reload page</string>
+
+    <string name="check_to_pass">I accept terms &amp; conditions.</string>
+    <string name="error_message">Please accept terms &amp; conditions first.</string>
+    <string name="launch_intro_activity">Launch intro activity</string>
+    <string name="terms_conditions">
+        <b>Terms &amp; Conditions </b>\n\n
+         This policy has been compiled to better serve those who are concerned with how their \'Personally Identifiable Information\' (PII) is being used online. PII, as described in US privacy law and information security, is information that can be used on its own or with other information to identify, contact, or locate a single person, or to identify an individual in context. Please read our privacy policy carefully to get a clear understanding of how we collect, use, protect or otherwise handle your Personally Identifiable Information in accordance with our website.\n
+         What personal information do we collect from the people that visit our app?\n
+        \n When giving feedback, as appropriate, you may be asked to enter your name, email address or other details to help you with your experience.
+        \n When do we collect information?\n
+        We collect information from you when you fill out a form or enter information on our app.
+        \n How do we use your information? \n
+        We may use the information we collect from you when you respond to a survey or give feedback, or use certain other site features in the following ways:
+        \n • To allow us to better service you in responding to your customer service requests.
+        \n How do we protect your information? \n
+        We do not use vulnerability scanning and/or scanning to PCI standards. We only provide articles and information. We never ask for credit card numbers. We use regular Malware Scanning. Your personal information is contained behind secured networks and is only accessible by a limited number of persons who have special access rights to such systems, and are required to keep the information confidential. In addition, all sensitive information you supply is encrypted via Secure Socket Layer (SSL) technology. We implement a variety of security measures when a user enters, submits, or accesses their information to maintain the safety of your personal information.
+    </string>
+    
+    <string-array name="counties">
+        <item>Baringo</item>
+        <item>Bomet</item>
+        <item>Bungoma</item>
+        <item>Busia</item>
+        <item>Elgeyo-Marakwet</item>
+        <item>Embu</item>
+        <item>Garissa</item>
+        <item>Homa Bay</item>
+        <item>Isiolo</item>
+        <item>Kajiado</item>
+        <item>Kakamega</item>
+        <item>Kericho</item>
+        <item>Kiambu</item>
+        <item>Kilifi</item>
+        <item>Kirinyaga</item>
+        <item>Kisii</item>
+        <item>Kisumu</item>
+        <item>Kitui</item>
+        <item>Kwale</item>
+        <item>Laikipia</item>
+        <item>Lamu</item>
+        <item>Machakos</item>
+        <item>Makueni</item>
+        <item>Mandera</item>
+        <item>Marsabit</item>
+        <item>Meru</item>
+        <item>Migori</item>
+        <item>Mombasa</item>
+        <item>Muranga</item>
+        <item>Nairobi</item>
+        <item>Nakuru</item>
+        <item>Nandi</item>
+        <item>Narok</item>
+        <item>Nyamira</item>
+        <item>Nyandarua</item>
+        <item>Nyeri</item>
+        <item>Samburu</item>
+        <item>Siaya</item>
+        <item>Taita-Taveta</item>
+        <item>Tana River</item>
+        <item>Tharaka-Nithi</item>
+        <item>Trans-Nzoia</item>
+        <item>Turkana</item>
+        <item>Uasin Gishu</item>
+        <item>Vihiga</item>
+        <item>Wajir</item>
+        <item>West Pokot</item>
+    </string-array>
+
+</resources>

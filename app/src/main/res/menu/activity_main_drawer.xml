@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@mipmap/ic_home"
+            android:title="Home" />
+
+        <item
+            android:id="@+id/nav_favourite"
+            android:icon="@drawable/favourite"
+            android:title="Favourites" />
+
+        <item
+            android:id="@+id/nav_sector"
+            android:title="Sectors" >
+        <menu >
+            <item android:title="Public Finance"
+                android:id="@+id/finance"
+                android:icon="@drawable/finance"/>
+            <item android:title="Education"
+                android:id="@+id/education"
+                android:icon="@drawable/education"/>
+            <item android:title="Public Health"
+                android:id="@+id/health"
+                android:icon="@drawable/health"/>
+            <item android:title="Agriculture"
+                android:id="@+id/agiculture"
+                android:icon="@drawable/agriculture"/>
+            <item android:title="Population and Vital Statistics"
+                android:id="@+id/population"
+                android:icon="@drawable/population"/>
+            <item android:title="Governance"
+                android:id="@+id/governance"
+                android:icon="@drawable/governance"/>
+            <item android:title="Manufacturing"
+                android:id="@+id/manufacturing"
+                android:icon="@drawable/manufacturing"/>
+            <item android:title="Energy"
+                android:id="@+id/energy"
+                android:icon="@drawable/energy"/>
+            <item android:title="Labour"
+                android:id="@+id/labour"
+                android:icon="@drawable/work"/>
+            <item android:title="CPI"
+                android:id="@+id/cpi"
+                android:icon="@drawable/cpi"/>
+            <item android:title="Trade and Commerce"
+                android:id="@+id/tradeandcommerce"
+                android:icon="@drawable/tc"/>
+        </menu>
+        </item>
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:title="More Sectors" >
+            <menu>
+            <item
+                android:id="@+id/navigation_spinner"
+                android:icon="@drawable/ic_more"
+                android:title=""
+                app:actionLayout="@layout/spinner"/>
+            </menu>
+        </item>
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_data"
+                android:icon="@drawable/ic_save_data"
+                android:title="Request Data" />
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@drawable/ic_help"
+                android:title="FAQ/Help" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_info"
+                android:title="About" />
+        </menu>
+    </item>
+
+</menu>

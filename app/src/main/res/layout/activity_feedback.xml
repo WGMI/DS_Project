@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true">
+
+            <LinearLayout
+                android:id="@+id/natural"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="@drawable/feedback"
+                android:orientation="horizontal"/>
+
+            <LinearLayout
+                android:layout_below="@+id/natural"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <customfonts.RobotoLightTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="We would like to hear from you, feel free to drop us a comment/feedback."
+                            android:letterSpacing="0.025"
+                            android:textColor="@color/black"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginStart="30dp"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.3dp"
+                    android:background="#99A1AC"
+                    android:layout_marginTop="20dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <customfonts.CustomEditText
+                            android:id="@+id/editEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rect"
+                            android:hint="Email (Optional)"
+                            android:textColorHint="@color/half_black"
+                            android:textSize="14sp"
+                            android:inputType="text"
+                            android:imeActionLabel="Done"
+                            android:imeOptions="actionDone"
+                            android:textColor="@color/grey"
+                            android:padding="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:maxLines="4"
+                            android:elevation="8dp"/>
+
+                        <customfonts.CustomEditText
+                            android:id="@+id/editTextFeedback"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:background="@drawable/rect"
+                            android:hint="Feedback..."
+                            android:textColorHint="@color/half_black"
+                            android:textSize="14sp"
+                            android:inputType="text"
+                            android:imeActionLabel="Done"
+                            android:imeOptions="actionDone"
+                            android:textColor="@color/grey"
+                            android:padding="15dp"
+                            android:maxLines="4"
+                            android:elevation="8dp"/>
+
+                        <android.support.v7.widget.AppCompatButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="feedback"
+                            android:layout_marginTop="10dp"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/round_button_brown"
+                            android:textColor="@color/white"
+                            android:text="Submit"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.3dp"
+                    android:background="#99A1AC"
+                    android:layout_marginTop="20dp"/>
+
+
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>
