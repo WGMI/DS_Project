@@ -52,7 +52,7 @@ public class DatabaseHealthApi {
         db.close();
     }
 
-    public void loadHealthData(final ProgressDialog d){
+    public void loadData(final ProgressDialog d){
         insertInto_health_percentage_incidence_of_diseases_in_kenya(d);
     }
 

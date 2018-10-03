@@ -343,7 +343,7 @@ public class ReportGraph extends AppCompatActivity {
                 list = databasePopulation.getVital_statistics_top_ten_death_causes();
             }else if (report.matches("Cases Handled By Various Courts")){
                 selectionLabel.setText("Category");
-                list = databaseGovernance.getCases_handled_by_various_courts_category();
+                list = databaseGovernance.getCases_handled_by_different_courts_category();
             }else if (report.matches("National Trends KCSE Candidates Mean Grade by Sex")){
                 selectionLabel.setText("Grades");
                 list = databaseEducation.getNationaltrendskcsecandidatesmeangradebysex_grades();
@@ -1602,7 +1602,6 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Approved Degree Diploma Programs")
                 ||report.matches("Student Enrolment in Public Universities")
                 ||report.matches("Teacher Training Colleges")
-                ||report.matches("Cases Handled By Various Courts")
                 ||report.matches("Identity Cards Made Processed and Collected")
                 ||report.matches("Public Assets Traced, Recovered and Loss Averted")
                 ||report.matches("County Expenditure")
@@ -1768,12 +1767,6 @@ public class ReportGraph extends AppCompatActivity {
                 label_3 = "Secondary";
                 yLabel.setText("Teachers");
                 list = databaseEducation.getTeachertrainingcolleges(county,choice);
-            }else if(report.matches("Cases Handled By Various Courts")){
-                label_1 = "Filled";
-                label_2 = "Pending";
-                label_3 = "Disposed of";
-                yLabel.setText("Cases");
-                list = databaseGovernance.getCases_handled_by_various_courts(selection);
             }else if(report.matches("Identity Cards Made Processed and Collected")){
                 label_1 = "Applications Made";
                 label_2 = "IDs produced";
@@ -1904,6 +1897,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Distribution of Outpatient Visits by Type of Health Care")
                 ||report.matches("Insurance Coverage by Counties and Types")
                 ||report.matches("Nutritional Status of Women")
+                ||report.matches("Cases Handled By Various Courts")
                 ){
 
             if(report.matches("Population Projections by Selected Age Group")){
@@ -1990,6 +1984,13 @@ public class ReportGraph extends AppCompatActivity {
                 label_4 = "Obese";
                 yLabel.setText("status");
                 list = databaseHealth.getNutritional_status_of_women(county);
+            }else if(report.matches("Cases Handled By Various Courts")){
+                label_1 = "Magistrate Court";
+                label_2 = "High Court";
+                label_3 = "Court of Appeal";
+                label_4 = "Supreme Court";
+                yLabel.setText("Cases");
+                list = databaseGovernance.getCases_handled_by_different_courts(selection);
             }
 
             if (list != null) {

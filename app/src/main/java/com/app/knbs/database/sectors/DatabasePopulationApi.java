@@ -35,7 +35,7 @@ public class DatabasePopulationApi {
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
 
-    public void loadAgricultureData(final ProgressDialog d){
+    public void loadData(final ProgressDialog d){
         //test();
         insertInto_population_by_sex_and_school_attendance(d);
         insertInto_population_households_type_floor_material_main_dwelling_unit(d);

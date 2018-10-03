@@ -64,6 +64,7 @@ import com.app.knbs.database.DatabaseHelper;
 import com.app.knbs.database.sectors.DatabaseEducation;
 import com.app.knbs.database.sectors.DatabaseEducationApi;
 import com.app.knbs.database.sectors.DatabaseFinanceApi;
+import com.app.knbs.database.sectors.DatabaseGovernanceApi;
 import com.app.knbs.database.sectors.DatabaseHealthApi;
 import com.app.knbs.database.sectors.DatabasePopulationApi;
 import com.app.knbs.services.ReportLoader;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity
     private DatabaseFinanceApi databaseFinanceApi;
     private DatabaseHealthApi databaseHealthApi;
     private DatabasePopulationApi databasePopulationApi;
+    private DatabaseGovernanceApi databaseGovernanceApi;
 
     private ProgressDialog dataFetchingDialog;
 
@@ -113,6 +115,7 @@ public class MainActivity extends AppCompatActivity
         databaseFinanceApi = new DatabaseFinanceApi(context);
         databaseHealthApi = new DatabaseHealthApi(context);
         databasePopulationApi = new DatabasePopulationApi(context);
+        databaseGovernanceApi = new DatabaseGovernanceApi(context);
 
         dataFetchingDialog = new ProgressDialog(MainActivity.this);
         dataFetchingDialog.setTitle("Fetching Data");
@@ -121,10 +124,11 @@ public class MainActivity extends AppCompatActivity
         dataFetchingDialog.show();
 
         //loader.loadReports();
-        databaseEducationApi.loadEducationData(dataFetchingDialog);
-        databaseFinanceApi.loadFinanceData(dataFetchingDialog);
-        databaseHealthApi.loadHealthData(dataFetchingDialog);
-        databasePopulationApi.loadAgricultureData(dataFetchingDialog);
+        databaseEducationApi.loadData(dataFetchingDialog);
+        databaseFinanceApi.loadData(dataFetchingDialog);
+        databaseHealthApi.loadData(dataFetchingDialog);
+        databasePopulationApi.loadData(dataFetchingDialog);
+        databaseGovernanceApi.loadData(dataFetchingDialog);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         textViewMessage = (TextView) findViewById(R.id.textViewMessage);

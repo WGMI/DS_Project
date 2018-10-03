@@ -113,6 +113,23 @@ public class DatabaseGovernance {
         return category;
     }
 
+    public List<String> getCases_handled_by_different_courts_category() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> category = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(category) FROM governance_cases_handled_by_different_courts ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            category.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return category;
+    }
+
     public List<Sector_Data> getCases_handled_by_various_courts(String choice) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
@@ -127,6 +144,34 @@ public class DatabaseGovernance {
             data.setSet_A(cursor.getString(1));
             data.setSet_B(cursor.getString(2));
             data.setSet_C(cursor.getString(3));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getCases_handled_by_different_courts(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select " +
+                "year," +
+                "magistrate_court,high_court," +
+                "court_of_appeal,supreme_court " +
+                "from governance_cases_handled_by_different_courts " +
+                "where category = '"+choice+"' " +
+                "GROUP BY year ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            data.setSet_C(cursor.getString(3));
+            data.setSet_D(cursor.getString(4));
             list.add(data);
         }
         cursor.close();

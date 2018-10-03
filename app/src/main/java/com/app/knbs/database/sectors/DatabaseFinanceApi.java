@@ -53,7 +53,7 @@ public class DatabaseFinanceApi {
         db.close();
     }
 
-    public void loadFinanceData(final ProgressDialog d){
+    public void loadData(final ProgressDialog d){
         insertInto_finance_economic_classification_revenue(d);//RECHECK
         insertInto_finance_excise_revenue_commodity(d);
         insertInto_finance_national_government_expenditure(d);

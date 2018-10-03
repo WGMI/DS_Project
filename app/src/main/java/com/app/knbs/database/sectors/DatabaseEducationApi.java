@@ -39,24 +39,7 @@ public class DatabaseEducationApi {
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
 
-    public void test(){
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        Cursor cursor = db.rawQuery("SELECT * FROM education_csa_adulteducationcentresbysubcounty where county_id = 30 OR county_id = '30'",null);
-
-        while(cursor.moveToNext()){
-
-            Log.d(TAG + "test", "test: " + cursor.getInt(0) + "\n"
-                    + cursor.getInt(1) + "\n"
-                    + cursor.getInt(2) + "\n"
-                    + cursor.getInt(3) + "\n"
-                    + cursor.getInt(4) + "\n" );
-        }
-
-        cursor.close();
-        db.close();
-    }
-
-    public void loadEducationData(final ProgressDialog d){
+    public void loadData(final ProgressDialog d){
         //test();
         insertInto_Approved_degree_diploma_programs(d);
         insertInto_education_studentenrollmentbysextechnicalinstitutions(d);
@@ -537,7 +520,6 @@ public class DatabaseEducationApi {
 
         request = policy(request);
         queue.add(request);
-        test();
     }
 
 }
