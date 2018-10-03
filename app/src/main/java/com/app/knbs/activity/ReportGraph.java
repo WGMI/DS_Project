@@ -267,6 +267,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Electricity Demand and Supply")
                 ||report.matches("KCPE Examination Results by Subject")
                 ||report.matches("Statement of National Government Operations")
+                ||report.matches("Percentage Incidence of Diseases in Kenya by Type and Year")
                 ||report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")
                 ||report.contains("Petroleum Supply and Demand")
                 ||report.contains("Net Domestic Sale of Petroleum Fuels by Consumer Category")
@@ -470,6 +471,9 @@ public class ReportGraph extends AppCompatActivity {
             }else if (report.matches("Statement of National Government Operations")){
                 selectionLabel.setText("Operation");
                 list = databaseFinance.getNational_Government_Operations();
+            }else if (report.matches("Percentage Incidence of Diseases in Kenya by Type and Year")){
+                selectionLabel.setText("Disease");
+                list = databaseHealth.getDiseases_For_Incidence();
             }else if (report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")){
                 selectionLabel.setText("Type");
                 list = databaseEnergy.getImport_Export_Type();
@@ -534,7 +538,7 @@ public class ReportGraph extends AppCompatActivity {
 
         }else if (
                 report.matches("Secondary Enrolment and Access Indicators")
-                ||report.matches("Primary Enrolment and Access Indicators")){
+                        ||report.matches("Primary Enrolment and Access Indicators")){
             radioGroup.setVisibility(View.VISIBLE);
             selectionTitle.setVisibility(View.VISIBLE);
             selectionTitle.setText("Enrolment and Access Indicators");
@@ -676,7 +680,7 @@ public class ReportGraph extends AppCompatActivity {
                 }
 
                 if (report.matches("Secondary Enrolment and Access Indicators")
-                    ||report.matches("Primary Enrolment and Access Indicators")){
+                        ||report.matches("Primary Enrolment and Access Indicators")){
 
                     if (checkedId == R.id.choice_one) {
                         choice = "Enrolment";
@@ -880,6 +884,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("KCPE Examination Candidature")
                 ||report.matches("KCPE Examination Results by Subject")
                 ||report.matches("Statement of National Government Operations")
+                ||report.matches("Percentage Incidence of Diseases in Kenya by Type and Year")
                 ||report.matches("Average Retail Prices of Selected Petroleum Products")
                 ||report.matches("Petroleum Supply and Demand")
                 ||report.matches("Net Domestic Sale of Petroleum Fuels by Consumer Category")
@@ -893,7 +898,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("KCSE Examination Results")
                 ||report.contains("Households by Main Type of Floor Material for the Main Dwelling Unit")
                 ||report.contains("Households by Main Source of Water")
-                ||report.contains("Percentage of Households by Ownership of Household Assets ")
+                ||report.contains("Percentage of Households by Ownership of Household Assets")
                 ) {
             if(report.matches("Crimes Reported to Police by Command Stations")){
                 label_1 = "Crimes";
@@ -1140,6 +1145,10 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = selection;
                 yLabel.setText("Amount");
                 list = databaseFinance.getStatement_of_National_Government_Operations(selection);
+            }else if (report.matches("Percentage Incidence of Diseases in Kenya by Type and Year")) {
+                label_1 = selection;
+                yLabel.setText("Value");
+                list = databaseHealth.getHealth_percentage_incidence_of_diseases_in_kenya(selection);
             }else if (report.matches("Petroleum Supply and Demand")) {
                 label_1 = selection;
                 list = databaseEnergy.getPetroleum_Supply_and_Demand(selection);
@@ -1187,7 +1196,7 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = selection;
                 yLabel.setText("Number");
                 list = databasePopulation.getHouseholds_by_Main_Source_of_Water(selection);
-            }else if (report.contains("Percentage of Households by Ownership of Household Assets")) {
+            }else if (report.contains("Percentage of Households by Ownership")) {
                 label_1 = selection;
                 yLabel.setText("Number");
                 list = databasePopulation.getPercentage_of_Households_by_Ownership_of_Household_Assets(selection);
@@ -1990,15 +1999,15 @@ public class ReportGraph extends AppCompatActivity {
 
                     try {
 
-                            group1.add(new Entry(Float.parseFloat(data.getSet_A()), i));
-                            group2.add(new Entry(Float.parseFloat(data.getSet_B()), i));
-                            group3.add(new Entry(Float.parseFloat(data.getSet_C()), i));
-                            group4.add(new Entry(Float.parseFloat(data.getSet_D()), i));
+                        group1.add(new Entry(Float.parseFloat(data.getSet_A()), i));
+                        group2.add(new Entry(Float.parseFloat(data.getSet_B()), i));
+                        group3.add(new Entry(Float.parseFloat(data.getSet_C()), i));
+                        group4.add(new Entry(Float.parseFloat(data.getSet_D()), i));
 
-                            group11.add(new BarEntry(Float.parseFloat(data.getSet_A()), i));
-                            group12.add(new BarEntry(Float.parseFloat(data.getSet_B()), i));
-                            group13.add(new BarEntry(Float.parseFloat(data.getSet_C()), i));
-                            group14.add(new BarEntry(Float.parseFloat(data.getSet_D()), i));
+                        group11.add(new BarEntry(Float.parseFloat(data.getSet_A()), i));
+                        group12.add(new BarEntry(Float.parseFloat(data.getSet_B()), i));
+                        group13.add(new BarEntry(Float.parseFloat(data.getSet_C()), i));
+                        group14.add(new BarEntry(Float.parseFloat(data.getSet_D()), i));
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -2276,4 +2285,3 @@ public class ReportGraph extends AppCompatActivity {
 
 
 }
-

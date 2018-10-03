@@ -40,6 +40,7 @@ public class DatabaseFinance {
             data.setSet_B(cursor.getString(2));
             data.setSet_C(cursor.getString(3));
             list.add(data);
+            Log.d(TAG, "row " + cursor.getString(0) + " " + cursor.getString(1) + " " + cursor.getString(2) + " " + cursor.getString(3) + " ");
         }
         cursor.close();
         db.close();

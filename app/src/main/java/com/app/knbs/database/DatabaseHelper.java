@@ -239,7 +239,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<String> getSectors() {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
         List<String> sectors = new ArrayList<>();
         int num;
         String query = "SELECT DISTINCT(sector_name) FROM sectors WHERE (sector_name!='Agriculture' AND sector_name!='Education' AND sector_name!='Governance'" +

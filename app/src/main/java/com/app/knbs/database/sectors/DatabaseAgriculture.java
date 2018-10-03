@@ -68,6 +68,11 @@ public class DatabaseAgriculture {
             data.setSet_B(cursor.getString(2));
             data.setSet_C(cursor.getString(3));
             list.add(data);
+            Log.d("output_test", "getAssets: " +
+                    cursor.getString(0) + "\n" +
+                    cursor.getString(1) + "\n" +
+                    cursor.getString(2) + "\n" +
+                    cursor.getString(3));
         }
         cursor.close();
         db.close();

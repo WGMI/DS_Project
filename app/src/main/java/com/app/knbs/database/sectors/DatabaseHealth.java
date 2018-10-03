@@ -110,7 +110,6 @@ public class DatabaseHealth {
         return list;
     }
 
-
     public List<Sector_Data> getInsurance_coverage_by_counties_and_types(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
 
@@ -183,7 +182,6 @@ public class DatabaseHealth {
         db.close();
         return list;
     }
-
 
     public List<Sector_Data> getNutritional_status_of_women(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
@@ -312,7 +310,6 @@ public class DatabaseHealth {
         return list;
     }
 
-
     public List<Sector_Data> getDiseases() {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
@@ -357,7 +354,6 @@ public class DatabaseHealth {
         return list;
     }
 
-
     public List<Sector_Data> getNhif_members() {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
@@ -378,7 +374,6 @@ public class DatabaseHealth {
         db.close();
         return list;
     }
-
 
     public List<Sector_Data> getNhif_resources() {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
@@ -464,7 +459,6 @@ public class DatabaseHealth {
         return list;
     }
 
-
     public List<Sector_Data> getHealth_facilities(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
@@ -485,7 +479,6 @@ public class DatabaseHealth {
         db.close();
         return list;
     }
-
 
     public List<Sector_Data> getHospitalbedsandcots(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
@@ -509,7 +502,6 @@ public class DatabaseHealth {
         return list;
     }
 
-
     public List<Sector_Data> getImmunization_rate(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
@@ -530,7 +522,6 @@ public class DatabaseHealth {
         db.close();
         return list;
     }
-
 
     public List<Sector_Data> getRegisteredmedicalpersonnel(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
@@ -590,6 +581,42 @@ public class DatabaseHealth {
             health.setYear(cursor.getString(0));
             health.setSet_A(cursor.getString(1));
             list.add(health);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getDiseases_For_Incidence() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> diseases = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(disease) FROM health_percentage_incidence_of_diseases_in_kenya";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            diseases.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return diseases;
+    }
+
+    public List<Sector_Data> getHealth_percentage_incidence_of_diseases_in_kenya(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select year, percentage_incidence from health_percentage_incidence_of_diseases_in_kenya where disease = '"+choice+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            list.add(data);
         }
         cursor.close();
         db.close();

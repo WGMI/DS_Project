@@ -3,6 +3,7 @@ package com.app.knbs;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -60,6 +61,12 @@ import com.app.knbs.adapter.model.Sector_Data;
 import com.app.knbs.app.PrefManager;
 import com.app.knbs.database.DBHandler;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.database.sectors.DatabaseEducation;
+import com.app.knbs.database.sectors.DatabaseEducationApi;
+import com.app.knbs.database.sectors.DatabaseFinanceApi;
+import com.app.knbs.database.sectors.DatabaseHealthApi;
+import com.app.knbs.database.sectors.DatabasePopulationApi;
+import com.app.knbs.services.ReportLoader;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -72,6 +79,8 @@ import static com.app.knbs.database.DatabaseHelper.TAG;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,SwipeRefreshLayout.OnRefreshListener {
 
+    private Context context;
+
     private RecyclerView recyclerView;
     private NewsAdapter adapter;
     private List<News> newsList;
@@ -82,12 +91,40 @@ public class MainActivity extends AppCompatActivity
     private CoordinatorLayout coordinatorLayout;
     public ImageView facebook,twitter,whatsapp;
 
+    private ReportLoader loader;
+    private DatabaseEducationApi databaseEducationApi;
+    private DatabaseFinanceApi databaseFinanceApi;
+    private DatabaseHealthApi databaseHealthApi;
+    private DatabasePopulationApi databasePopulationApi;
+
+    private ProgressDialog dataFetchingDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        context = this;
+
+        loader = new ReportLoader(context);
+        databaseEducationApi = new DatabaseEducationApi(context);
+        databaseFinanceApi = new DatabaseFinanceApi(context);
+        databaseHealthApi = new DatabaseHealthApi(context);
+        databasePopulationApi = new DatabasePopulationApi(context);
+
+        dataFetchingDialog = new ProgressDialog(MainActivity.this);
+        dataFetchingDialog.setTitle("Fetching Data");
+        dataFetchingDialog.setMessage("Please wait...");
+        dataFetchingDialog.setCanceledOnTouchOutside(false);
+        dataFetchingDialog.show();
+
+        //loader.loadReports();
+        databaseEducationApi.loadEducationData(dataFetchingDialog);
+        databaseFinanceApi.loadFinanceData(dataFetchingDialog);
+        databaseHealthApi.loadHealthData(dataFetchingDialog);
+        databasePopulationApi.loadAgricultureData(dataFetchingDialog);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         textViewMessage = (TextView) findViewById(R.id.textViewMessage);
