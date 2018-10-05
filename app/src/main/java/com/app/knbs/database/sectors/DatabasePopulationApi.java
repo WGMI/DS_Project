@@ -182,12 +182,13 @@ public class DatabasePopulationApi {
 
 
                             db.close();
+                            d.dismiss();
                             Log.d(TAG, "population_by_sex_and_school_attendance: " + success);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        d.dismiss();
+
                     }
                 },
                 new Response.ErrorListener() {

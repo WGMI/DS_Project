@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
 
         context = this;
 
-        loader = new ReportLoader(context);
+        /*loader = new ReportLoader(context);
         databaseEducationApi = new DatabaseEducationApi(context);
         databaseFinanceApi = new DatabaseFinanceApi(context);
         databaseHealthApi = new DatabaseHealthApi(context);
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity
         databaseFinanceApi.loadData(dataFetchingDialog);
         databaseHealthApi.loadData(dataFetchingDialog);
         databasePopulationApi.loadData(dataFetchingDialog);
-        databaseGovernanceApi.loadData(dataFetchingDialog);
+        databaseGovernanceApi.loadData(dataFetchingDialog);*/
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         textViewMessage = (TextView) findViewById(R.id.textViewMessage);

@@ -442,7 +442,7 @@ public class DatabaseGovernance {
     public List<Sector_Data> getNumber_of_police_prisons_and_probation_officers(String choice) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
-        String query = "SELECT year,male,female FROM governance_number_of_police_prisons_and_probation_officers WHERE category='"+choice+"' GROUP BY year ";
+        String query = "SELECT year,male + female FROM governance_number_of_police_prisons_and_probation_officers WHERE category='"+choice+"' GROUP BY year ";
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
         Log.d(TAG, "rows "+num+"\n"+query);
@@ -451,7 +451,7 @@ public class DatabaseGovernance {
             Sector_Data data = new Sector_Data();
             data.setYear(cursor.getString(0));
             data.setSet_A(cursor.getString(1));
-            data.setSet_B(cursor.getString(2));
+            //data.setSet_B(cursor.getString(2));
             list.add(data);
         }
         cursor.close();

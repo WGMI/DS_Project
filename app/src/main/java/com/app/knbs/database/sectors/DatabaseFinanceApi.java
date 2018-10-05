@@ -72,6 +72,7 @@ public class DatabaseFinanceApi {
     }
 
     private void insertInto_finance_economic_classification_revenue(final ProgressDialog d){
+        d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
                 "http://156.0.232.97:8000/finance/all_economic_revenue",
@@ -179,6 +180,7 @@ public class DatabaseFinanceApi {
                             }
 
                             db.close();
+                            d.dismiss();
                             Log.d(TAG, "finance_economic_classification_revenue: " + success);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -197,6 +199,7 @@ public class DatabaseFinanceApi {
     }
 
     private void insertInto_finance_excise_revenue_commodity(final ProgressDialog d){
+        d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
                 "http://156.0.232.97:8000/finance/all_excise_revenue",
@@ -259,6 +262,7 @@ public class DatabaseFinanceApi {
                             }
 
                             db.close();
+                            d.dismiss();
                             Log.d(TAG, "finance_excise_revenue_commodity: " + success);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -277,6 +281,7 @@ public class DatabaseFinanceApi {
     }
 
     private void insertInto_finance_national_government_expenditure(final ProgressDialog d){
+        d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
                 "http://156.0.232.97:8000/finance/all_national_expenditure",
@@ -369,6 +374,7 @@ public class DatabaseFinanceApi {
                             }
 
                             db.close();
+                            d.dismiss();
                             Log.d(TAG, "finance_national_government_expenditure: " + success);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -387,6 +393,7 @@ public class DatabaseFinanceApi {
     }
 
     private void insertInto_finance_national_government_expenditure_purpose(final ProgressDialog d){
+        d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
                 "http://156.0.232.97:8000/finance/all_finance_national_government_expenditure_purpose",
@@ -509,6 +516,7 @@ public class DatabaseFinanceApi {
                             }
 
                             db.close();
+                            d.dismiss();
                             Log.d(TAG, "finance_national_government_expenditure_purpose: " + success);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -527,6 +535,7 @@ public class DatabaseFinanceApi {
     }
 
     private void insertInto_finance_outstanding_debt_international_organization(final ProgressDialog d){
+        d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
                 "http://156.0.232.97:8000/finance/all_finance_outstanding_debt_international_organization",
@@ -589,6 +598,7 @@ public class DatabaseFinanceApi {
                             }
 
                             db.close();
+                            d.dismiss();
                             Log.d(TAG, "finance_outstanding_debt_international_organization: " + success);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -607,6 +617,7 @@ public class DatabaseFinanceApi {
     }
 
     private void insertInto_finance_outstanding_debt_lending_country(final ProgressDialog d){
+        d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
                 "http://156.0.232.97:8000/finance/all_finance_outstanding_debt_lending_country",
@@ -691,6 +702,7 @@ public class DatabaseFinanceApi {
                             }
 
                             db.close();
+                            d.dismiss();
                             Log.d(TAG, "finance_outstanding_debt_lending_country: " + success);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -709,6 +721,7 @@ public class DatabaseFinanceApi {
     }
 
     private void insertInto_finance_statement_of_national_government_operations(final ProgressDialog d){
+        d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
                 "http://156.0.232.97:8000/finance/all_finance_statement_of_national_government_operations",
@@ -751,6 +764,7 @@ public class DatabaseFinanceApi {
                             }
 
                             db.close();
+                            d.dismiss();
                             Log.d(TAG, "finance_statement_of_national_government_operations: " + success);
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.app.knbs.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,11 +21,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.app.knbs.MainActivity;
 import com.app.knbs.R;
 import com.app.knbs.adapter.ReportsNationalAdapter;
 import com.app.knbs.adapter.model.Report;
 import com.app.knbs.adapter.model.Sector;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.database.sectors.DatabaseEducationApi;
+import com.app.knbs.database.sectors.DatabaseEnergyApi;
+import com.app.knbs.database.sectors.DatabaseFinanceApi;
+import com.app.knbs.database.sectors.DatabaseGovernanceApi;
+import com.app.knbs.database.sectors.DatabaseHealthApi;
+import com.app.knbs.database.sectors.DatabaseManufacturing;
+import com.app.knbs.database.sectors.DatabaseManufacturingApi;
+import com.app.knbs.database.sectors.DatabaseMoneyAndBankingApi;
+import com.app.knbs.database.sectors.DatabasePopulationApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +53,17 @@ public class National_Fragment extends Fragment {
     private String sector;
     private EditText inputSearch;
     DatabaseHelper dbHelper;
+
+    private ProgressDialog dataFetchingDialog;
+
+    private DatabaseEducationApi databaseEducationApi;
+    private DatabaseFinanceApi databaseFinanceApi;
+    private DatabaseHealthApi databaseHealthApi;
+    private DatabasePopulationApi databasePopulationApi;
+    private DatabaseGovernanceApi databaseGovernanceApi;
+    private DatabaseMoneyAndBankingApi databaseMoneyAndBankingApi;
+    private DatabaseManufacturingApi databaseManufacturingApi;
+    private DatabaseEnergyApi databaseEnergyApi;
 
     public National_Fragment() {
         // Required empty public constructor
@@ -70,6 +92,47 @@ public class National_Fragment extends Fragment {
         dbHelper = new DatabaseHelper(getContext());
 
         adapter = new ReportsNationalAdapter(getContext(), reportList);
+
+        dataFetchingDialog = new ProgressDialog(getContext());
+        dataFetchingDialog.setTitle("Fetching Data");
+        dataFetchingDialog.setMessage("Please wait...");
+        dataFetchingDialog.setCanceledOnTouchOutside(false);
+
+        switch (sector){
+            case "Education" :
+                databaseEducationApi = new DatabaseEducationApi(getContext());
+                databaseEducationApi.loadData(dataFetchingDialog);
+                break;
+            case "Public Finance" :
+                databaseFinanceApi = new DatabaseFinanceApi(getContext());
+                databaseFinanceApi.loadData(dataFetchingDialog);
+                break;
+            case "Public Health" :
+                databaseHealthApi = new DatabaseHealthApi(getContext());
+                databaseHealthApi.loadData(dataFetchingDialog);
+                break;
+            case "Population and Vital Statistics" :
+                databasePopulationApi = new DatabasePopulationApi(getContext());
+                databasePopulationApi.loadData(dataFetchingDialog);
+                break;
+            case "Governance" :
+                databaseGovernanceApi = new DatabaseGovernanceApi(getContext());
+                databaseGovernanceApi.loadData(dataFetchingDialog);
+                break;
+            case "Money And Banking" :
+                databaseMoneyAndBankingApi = new DatabaseMoneyAndBankingApi(getContext());
+                databaseMoneyAndBankingApi.loadData(dataFetchingDialog);
+                break;
+            case "Manufacturing" :
+                databaseManufacturingApi = new DatabaseManufacturingApi(getContext());
+                databaseManufacturingApi.loadData(dataFetchingDialog);
+                break;
+            case "Energy" :
+                databaseEnergyApi = new DatabaseEnergyApi(getContext());
+                databaseEnergyApi.loadData(dataFetchingDialog);
+                break;
+        }
+
 
         assert recyclerView != null;
         recyclerView.setHasFixedSize(true);
