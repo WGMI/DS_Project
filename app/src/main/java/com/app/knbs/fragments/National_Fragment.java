@@ -27,15 +27,21 @@ import com.app.knbs.adapter.ReportsNationalAdapter;
 import com.app.knbs.adapter.model.Report;
 import com.app.knbs.adapter.model.Sector;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.database.sectors.DatabaseBuildingConstructionApi;
+import com.app.knbs.database.sectors.DatabaseCPIApi;
 import com.app.knbs.database.sectors.DatabaseEducationApi;
 import com.app.knbs.database.sectors.DatabaseEnergyApi;
 import com.app.knbs.database.sectors.DatabaseFinanceApi;
 import com.app.knbs.database.sectors.DatabaseGovernanceApi;
 import com.app.knbs.database.sectors.DatabaseHealthApi;
+import com.app.knbs.database.sectors.DatabaseLabour;
+import com.app.knbs.database.sectors.DatabaseLabourApi;
 import com.app.knbs.database.sectors.DatabaseManufacturing;
 import com.app.knbs.database.sectors.DatabaseManufacturingApi;
 import com.app.knbs.database.sectors.DatabaseMoneyAndBankingApi;
 import com.app.knbs.database.sectors.DatabasePopulationApi;
+import com.app.knbs.database.sectors.DatabaseTourismApi;
+import com.app.knbs.database.sectors.DatabaseTradeCommerceApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +70,11 @@ public class National_Fragment extends Fragment {
     private DatabaseMoneyAndBankingApi databaseMoneyAndBankingApi;
     private DatabaseManufacturingApi databaseManufacturingApi;
     private DatabaseEnergyApi databaseEnergyApi;
+    private DatabaseLabourApi databaseLabourApi;
+    private DatabaseCPIApi databaseCPIApi;
+    private DatabaseTradeCommerceApi databaseTradeCommerceApi;
+    private DatabaseBuildingConstructionApi databaseBuildingConstructionApi;
+    private DatabaseTourismApi databaseTourismApi;
 
     public National_Fragment() {
         // Required empty public constructor
@@ -130,6 +141,26 @@ public class National_Fragment extends Fragment {
             case "Energy" :
                 databaseEnergyApi = new DatabaseEnergyApi(getContext());
                 databaseEnergyApi.loadData(dataFetchingDialog);
+                break;
+            case "Labour" :
+                databaseLabourApi = new DatabaseLabourApi(getContext());
+                databaseLabourApi.loadData(dataFetchingDialog);
+                break;
+            case "CPI" :
+                databaseCPIApi = new DatabaseCPIApi(getContext());
+                databaseCPIApi.loadData(dataFetchingDialog);
+                break;
+            case "Trade and Commerce" :
+                databaseTradeCommerceApi = new DatabaseTradeCommerceApi(getContext());
+                databaseTradeCommerceApi.loadData(dataFetchingDialog);
+                break;
+            case "Building and Construction" :
+                databaseBuildingConstructionApi = new DatabaseBuildingConstructionApi(getContext());
+                databaseBuildingConstructionApi.loadData(dataFetchingDialog);
+                break;
+            case "Tourism" :
+                databaseTourismApi = new DatabaseTourismApi(getContext());
+                databaseTourismApi.loadData(dataFetchingDialog);
                 break;
         }
 

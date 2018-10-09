@@ -173,7 +173,7 @@ public class DatabaseCPI {
         List<Sector_Data> list = new ArrayList<>();
         while(cursor.moveToNext()) {
             Sector_Data data = new Sector_Data();
-            data.setYear("2015");
+            data.setYear("2009");
             data.setSet_A(cursor.getString(0));
             data.setSet_B(cursor.getString(1));
             data.setSet_C(cursor.getString(2));
@@ -190,7 +190,7 @@ public class DatabaseCPI {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         List<String> category = new ArrayList<>();
         int num;
-        String query = "SELECT DISTINCT(description) FROM cpi_group_weights_for_kenya_cpi_febuary_base_2009 ";
+        String query = "SELECT DISTINCT(item_group) FROM cpi_group_weights_for_kenya_cpi_october_base_1997 ";
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
         Log.d(TAG, "rows "+num+"\n"+query);
@@ -213,7 +213,7 @@ public class DatabaseCPI {
                 "SUM(CASE WHEN household='Upper' THEN group_weights ELSE 0 END) AS 'Upper' ,\n" +
                 "SUM(CASE WHEN household=' Rest of Urban Areas ' THEN group_weights ELSE 0 END) AS 'Rest of Urban Areas', \n" +
                 "SUM(CASE WHEN household=' All Kenya' THEN group_weights ELSE 0 END) AS 'All Kenya' \n" +
-                "FROM cpi_group_weights_for_kenya_cpi_febuary_base_2009 WHERE description='"+choice+"' ";
+                "FROM cpi_group_weights_for_kenya_cpi_october_base_1997 WHERE item_group='"+choice+"' ";
         Cursor cursor = db.rawQuery(query, null);
 
         Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);

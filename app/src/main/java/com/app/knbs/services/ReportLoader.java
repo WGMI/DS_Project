@@ -1,5 +1,6 @@
 package com.app.knbs.services;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -34,6 +35,7 @@ public class ReportLoader {
     DatabaseHelper dbHelper = new DatabaseHelper(context);
 
     public ReportLoader(Context context) {
+        Log.d(TAG, "ReportLoader: " + getApi("Place of Delivery"));
         this.context = context;
     }
 
@@ -45,8 +47,8 @@ public class ReportLoader {
         return request;
     }
 
-    public void loadReports(){
-
+    public void loadReports(final ProgressDialog d){
+        d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
                 "http://156.0.232.97:8000/health/all_sectors",
@@ -68,45 +70,30 @@ public class ReportLoader {
                             JSONArray coverageArray = coverageObject.getJSONArray("data");
                             JSONArray apiArray = apiObject.getJSONArray("data");
 
-                            List<String> sectorNames = new ArrayList<>();
-                            List<String> reports = new ArrayList<>();
-                            List<String> sources = new ArrayList<>();
-                            List<String> tables = new ArrayList<>();
-                            List<String> coverages = new ArrayList<>();
-                            List<String> apis = new ArrayList<>();
-
-                            for(int i=0;i<apiArray.length();i++){
-                                sectorNames.add(sectorNameArray.getString(i));
-                                reports.add(reportArray.getString(i));
-                                sources.add(sourceArray.getString(i));
-                                tables.add(tableArray.getString(i));
-                                coverages.add(coverageArray.getString(i));
-                                apis.add(apiArray.getString(i));
-                            }
-
                             SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("sectors_from_api",null,null);
 
                             long success = 0;
 
                             for(int i=0;i<apiArray.length();i++){
                                 ContentValues values = new ContentValues();
 
-                                values.put("sector_id",i);
-                                values.put("sector_name",sectorNames.get(i));
-                                //values.put("report","");
-                                //values.put("coverage","");
-                                //values.put("source","");
-                                values.put("table_name",tables.get(i));
-                                values.put("report",reports.get(i));
-                                values.put("api_url",apis.get(i));
-                                //values.put("favourite",0);
-                                //values.put("isActive",0);
+                                values.put("sector_id",i+1);
+                                values.put("sector_name",sectorNameArray.getString(i));
+                                values.put("report",reportArray.getString(i));
+                                values.put("coverage",coverageArray.getString(i));
+                                values.put("source",sourceArray.getString(i));
+                                values.put("table_name",tableArray.getString(i));
+                                values.put("api_url",apiArray.getString(i));
+                                values.put("favourite",0);
+                                values.put("isActive",1);
 
-                                success = db.insert("sectors_from_api_abridged",null,values);
+                                success = db.insert("sectors_from_api",null,values);
                             }
 
+                            d.dismiss();
                             db.close();
-                            Log.d(TAG, "sectors_from_api_abridged: " + success);
+                            Log.d(TAG, "sectors_from_api: " + success);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -121,5 +108,17 @@ public class ReportLoader {
         );
         request = policy(request);
         queue.add(request);
+    }
+
+    public String getApi(String report){
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+        Cursor cursor =
+                db.rawQuery("select api_url from sectors_from_api where report = '"+report.trim()+"'",null);
+        String api = "failed";
+        if(cursor.moveToFirst()){
+            api = cursor.getString(0);
+        }
+
+        return api;
     }
 }

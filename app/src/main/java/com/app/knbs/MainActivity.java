@@ -93,11 +93,6 @@ public class MainActivity extends AppCompatActivity
     public ImageView facebook,twitter,whatsapp;
 
     private ReportLoader loader;
-    private DatabaseEducationApi databaseEducationApi;
-    private DatabaseFinanceApi databaseFinanceApi;
-    private DatabaseHealthApi databaseHealthApi;
-    private DatabasePopulationApi databasePopulationApi;
-    private DatabaseGovernanceApi databaseGovernanceApi;
 
     private ProgressDialog dataFetchingDialog;
 
@@ -110,12 +105,8 @@ public class MainActivity extends AppCompatActivity
 
         context = this;
 
-        /*loader = new ReportLoader(context);
-        databaseEducationApi = new DatabaseEducationApi(context);
-        databaseFinanceApi = new DatabaseFinanceApi(context);
-        databaseHealthApi = new DatabaseHealthApi(context);
-        databasePopulationApi = new DatabasePopulationApi(context);
-        databaseGovernanceApi = new DatabaseGovernanceApi(context);
+        loader = new ReportLoader(context);
+
 
         dataFetchingDialog = new ProgressDialog(MainActivity.this);
         dataFetchingDialog.setTitle("Fetching Data");
@@ -123,12 +114,7 @@ public class MainActivity extends AppCompatActivity
         dataFetchingDialog.setCanceledOnTouchOutside(false);
         dataFetchingDialog.show();
 
-        //loader.loadReports();
-        databaseEducationApi.loadData(dataFetchingDialog);
-        databaseFinanceApi.loadData(dataFetchingDialog);
-        databaseHealthApi.loadData(dataFetchingDialog);
-        databasePopulationApi.loadData(dataFetchingDialog);
-        databaseGovernanceApi.loadData(dataFetchingDialog);*/
+        loader.loadReports(dataFetchingDialog);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         textViewMessage = (TextView) findViewById(R.id.textViewMessage);

@@ -63,7 +63,6 @@ public class DatabaseBuildingConstruction {
         return list;
     }
 
-
     public List<Sector_Data> getBuilding_and_construction_amount(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
@@ -110,7 +109,7 @@ public class DatabaseBuildingConstruction {
         int num;
         //String query = "SELECT year,september FROM building_and_construction_quarterly_residential_bulding_cost e " +
         //        "                 GROUP BY year,county_name ";
-        String query = "SELECT year,september FROM building_and_construction_quarterly_residential_bulding_cost e where year < 2015 ";
+        String query = "SELECT year,september FROM building_and_construction_quarterly_residential_bulding_cost e group by year\n";
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
         Log.d(TAG, "rows "+num+"\n"+query);

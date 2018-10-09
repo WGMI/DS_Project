@@ -302,7 +302,7 @@ public class DatabaseTradeCommerce {
     public List<Sector_Data> getValues_of_Total_Exports_to_European_Union(String choice) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
-        String query = "select year,value_in_millions from trade_and_commerce_value_of_total_exports_european_union where country='"+choice+"' GROUP BY year ";
+        String query = "select year,value_in_millions from trade_and_commerce_value_of_total_exports_european_union where country LIKE '%"+choice.trim()+"%' GROUP BY year ";
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
         Log.d(TAG, "rows "+num+"\n"+query);

@@ -278,6 +278,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Households by Main Type of Floor Material for the Main Dwelling Unit")
                 ||report.contains("Households by Main Source of Water")
                 ||report.contains("Percentage of Households by Ownership of Household Assets")
+                ||report.contains("Values of Total Exports to European Union")
                 ) {
             List<String> list = null;
             selectionLabel.setVisibility(View.VISIBLE);
@@ -501,6 +502,9 @@ public class ReportGraph extends AppCompatActivity {
             }else if (report.contains("Percentage of Households by Ownership of Household Assets")){
                 selectionLabel.setText("Asset");
                 list = databasePopulation.getAssets();
+            }else if (report.contains("Values of Total Exports to European Union")){
+                selectionLabel.setText("Country");
+                list = databaseTradeCommerce.getEuropean_Countries();
             }
 
             select.setVisibility(View.VISIBLE);
@@ -899,6 +903,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Households by Main Type of Floor Material for the Main Dwelling Unit")
                 ||report.contains("Households by Main Source of Water")
                 ||report.contains("Percentage of Households by Ownership of Household Assets")
+                ||report.contains("Values of Total Exports to European Union")
                 ) {
             if(report.matches("Crimes Reported to Police by Command Stations")){
                 label_1 = "Crimes";
@@ -1200,6 +1205,10 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = selection;
                 yLabel.setText("Number");
                 list = databasePopulation.getPercentage_of_Households_by_Ownership_of_Household_Assets(selection);
+            }else if (report.contains("Values of Total Exports to European Union")) {
+                label_1 = selection;
+                yLabel.setText("Number");
+                list = databaseTradeCommerce.getValues_of_Total_Exports_to_European_Union(selection);
             }
 
             if (list != null) {
@@ -1597,7 +1606,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Hotel Occupancy By Zone")
                 ||report.matches("Domestic Credit")
                 ||report.matches("Tourism Visitor To Parks")
-                ||report.matches("Tourism Visitors To Museums")
+                ||report.matches("Tourism Visitor To Museums")
                 ||report.matches("NHIF Resources")
                 ||report.matches("Approved Degree Diploma Programs")
                 ||report.matches("Student Enrolment in Public Universities")
@@ -1737,7 +1746,7 @@ public class ReportGraph extends AppCompatActivity {
                 label_3 = "Amboseli";
                 yLabel.setText("Visitors");
                 list = databaseTourism.getTourism_visitor_to_parks();
-            }else if (report.matches("Tourism Visitors To Museums")){
+            }else if (report.matches("Tourism Visitor To Museums")){
                 label_1 = "Nairobi Snake Park";
                 label_2 = "Fort Jesus";
                 label_3 = "Karen Blixen";
