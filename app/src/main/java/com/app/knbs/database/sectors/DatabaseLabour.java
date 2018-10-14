@@ -26,6 +26,44 @@ public class DatabaseLabour {
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(mContext);
 
+    public List<String> getPrivate_Sector_Categories(){
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> categories = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(private_sector) FROM labour_average_wage_earnings_per_employee_private_sector ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            categories.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return categories;
+    }
+
+    public List<Sector_Data> getAverage_Wage_Earnings_Per_Employee_in_Private_Sector(String choice){
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        //choice = choice.substring(0, 1).toUpperCase() + choice.substring(1);
+        //String query = "SELECT year,number FROM education_es_teachertraineesprivateenrolment WHERE gender='"+choice+"' GROUP BY year ";
+
+        String query = "select year,wage_earnings from labour_average_wage_earnings_per_employee_private_sector where private_sector = '"+choice+"'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
     public List<Sector_Data> getTotal_recorded_employment() {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         //choice = choice.substring(0, 1).toUpperCase() + choice.substring(1);

@@ -36,6 +36,7 @@ import com.app.knbs.database.sectors.DatabaseGovernanceApi;
 import com.app.knbs.database.sectors.DatabaseHealthApi;
 import com.app.knbs.database.sectors.DatabaseLabour;
 import com.app.knbs.database.sectors.DatabaseLabourApi;
+import com.app.knbs.database.sectors.DatabaseLandClimateApi;
 import com.app.knbs.database.sectors.DatabaseManufacturing;
 import com.app.knbs.database.sectors.DatabaseManufacturingApi;
 import com.app.knbs.database.sectors.DatabaseMoneyAndBankingApi;
@@ -75,6 +76,7 @@ public class National_Fragment extends Fragment {
     private DatabaseTradeCommerceApi databaseTradeCommerceApi;
     private DatabaseBuildingConstructionApi databaseBuildingConstructionApi;
     private DatabaseTourismApi databaseTourismApi;
+    private DatabaseLandClimateApi databaseLandClimateApi;
 
     public National_Fragment() {
         // Required empty public constructor
@@ -161,6 +163,10 @@ public class National_Fragment extends Fragment {
             case "Tourism" :
                 databaseTourismApi = new DatabaseTourismApi(getContext());
                 databaseTourismApi.loadData(dataFetchingDialog);
+                break;
+            case "Environment and Natural Resources" :
+                databaseLandClimateApi = new DatabaseLandClimateApi(getContext());
+                databaseLandClimateApi.loadData(dataFetchingDialog);
                 break;
         }
 

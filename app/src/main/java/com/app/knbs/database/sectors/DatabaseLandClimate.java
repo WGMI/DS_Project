@@ -234,4 +234,108 @@ public class DatabaseLandClimate {
         return list;
     }
 
+    public List<Sector_Data> getRainfall(String county) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select year,rainfall_in_mm " +
+                "from land_and_climate_rainfall e " +
+                "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"' GROUP BY year ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getSurface_Categories() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> categories = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(private_sector) FROM land_and_climate_surface_area_by_category ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            categories.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return categories;
+    }
+
+    public List<Sector_Data> getSurface_Area_By_Category(String county, String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT area_sq_km, " +
+                "FROM land_and_climate_surface_area_by_category e " +
+                "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"' AND category='"+selection+"'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "Query"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("Untimed");
+            data.setSet_A(cursor.getString(0));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getTemperature(String county) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT year,temp_celsius_degrees " +
+                "FROM land_and_climate_temperature e " +
+                "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "Query"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getLand_Topography(String county) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "select year, " +
+                "(CASE WHEN geography_type='Altitude: Highest Point' THEN altitude_in_metres ELSE 0 END) as Highest," +
+                "(CASE WHEN geography_type='Altitude: Lowest Point' THEN altitude_in_metres ELSE 0 END) as Lowest " +
+                "from land_and_climate_topography_altitude e " +
+                "JOIN counties c ON e.county_id=c.county_id WHERE county_name='Nairobi' " +
+                "limit 1";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "Query"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
 }

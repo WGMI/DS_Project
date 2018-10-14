@@ -268,7 +268,6 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("KCPE Examination Results by Subject")
                 ||report.matches("Statement of National Government Operations")
                 ||report.matches("Percentage Incidence of Diseases in Kenya by Type and Year")
-                ||report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")
                 ||report.contains("Petroleum Supply and Demand")
                 ||report.contains("Net Domestic Sale of Petroleum Fuels by Consumer Category")
                 ||report.contains("Installed and Effective Capacity of Electricity")
@@ -279,6 +278,10 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Households by Main Source of Water")
                 ||report.contains("Percentage of Households by Ownership of Household Assets")
                 ||report.contains("Values of Total Exports to European Union")
+                ||report.contains("Quarterly Civil Engineering Cost Index")
+                ||report.matches("Average Wage Earnings Per Employee in Private Sector")
+                ||report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")
+                ||report.contains("Surface Area By Category")
                 ) {
             List<String> list = null;
             selectionLabel.setVisibility(View.VISIBLE);
@@ -505,6 +508,15 @@ public class ReportGraph extends AppCompatActivity {
             }else if (report.contains("Values of Total Exports to European Union")){
                 selectionLabel.setText("Country");
                 list = databaseTradeCommerce.getEuropean_Countries();
+            }else if (report.contains("Quarterly Civil Engineering Cost Index")){
+                selectionLabel.setText("Material");
+                list = databaseBuildingConstruction.getMaterials();
+            }else if (report.matches("Average Wage Earnings Per Employee in Private Sector")){
+                selectionLabel.setText("Category");
+                list = databaseLabour.getPrivate_Sector_Categories();
+            }else if (report.contains("Surface Area By Category")){
+                selectionLabel.setText("Category");
+                list = databaseLandClimate.getSurface_Categories();
             }
 
             select.setVisibility(View.VISIBLE);
@@ -904,6 +916,12 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Households by Main Source of Water")
                 ||report.contains("Percentage of Households by Ownership of Household Assets")
                 ||report.contains("Values of Total Exports to European Union")
+                ||report.matches("Average Wage Earnings Per Employee in Private Sector")
+                ||report.matches("Proportion of Population That Took A Trip")
+                ||report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")
+                ||report.contains("Rainfall")
+                ||report.contains("Surface Area By Category")
+                ||report.contains("Temperature")
                 ) {
             if(report.matches("Crimes Reported to Police by Command Stations")){
                 label_1 = "Crimes";
@@ -1209,6 +1227,30 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = selection;
                 yLabel.setText("Number");
                 list = databaseTradeCommerce.getValues_of_Total_Exports_to_European_Union(selection);
+            }else if (report.matches("Average Wage Earnings Per Employee in Private Sector")) {
+                label_1 = selection;
+                yLabel.setText("Earnings");
+                list = databaseLabour.getAverage_Wage_Earnings_Per_Employee_in_Private_Sector(selection);
+            }else if (report.matches("Proportion of Population That Took A Trip")) {
+                label_1 = "";
+                yLabel.setText("Proportion");
+                list = databaseTourism.getProportion_of_Population_That_Took_A_Trip(county);
+            }else if (report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")) {
+                label_1 = "Quantity";
+                yLabel.setText("Quantity");
+                list = databaseEnergy.getQuantity_and_Value_of_Imports_Exports_and_Reexports_of_Petroleum_Products(selection);
+            }else if (report.contains("Rainfall")) {
+                label_1 = "Quantity";
+                yLabel.setText("Quantity");
+                list = databaseLandClimate.getRainfall(county);
+            }else if (report.contains("Surface Area By Category")) {
+                label_1 = "Area";
+                yLabel.setText("Area (SQ KM)");
+                list = databaseLandClimate.getSurface_Area_By_Category(county,selection);
+            }else if (report.contains("Temperature")) {
+                label_1 = "Temperature";
+                yLabel.setText("Degrees Celcius");
+                list = databaseLandClimate.getTemperature(county);
             }
 
             if (list != null) {
@@ -1275,18 +1317,24 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Primary Enrolment and Access Indicators")
                 ||report.matches("Secondary Enrolment and Access Indicators")
                 ||report.matches("Total Recorded Employment")
-                ||report.matches("Average Wage Earnings Per Employee in Private Sector")
                 ||report.matches("Average Wage Earnings Per Employee in Public Sector")
                 ||report.matches("Memorandum Items in Public Sector")
                 ||report.matches("Wage Employment by Industry and Sex")
                 ||report.contains("Interest Rates")
                 ||report.contains("Production Area and Average Yield of Coffee")
                 ||report.contains("Production Area and Average Yield of Tea")
-                ||report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")
                 ||report.contains("Participation in Key Decision Making Positions by Sex")
                 ||report.contains("Women Groups Registration Contribution Women Enterprise Fund")
                 ||report.contains("Women Groups Registration Contributions Uwezo Funds")
                 ||report.contains("Population by Sex and School Attendance (3 Years and Above)")
+                ||report.contains("ECDE Enrolment, Gross and Net Enrolment Rates")
+                ||report.contains("Number of Candidates by Sex in KCSE")
+                ||report.contains("Primary School Enrolment by Sex")
+                ||report.contains("Primary School Teachers by Sex")
+                ||report.contains("Public Primary Teachers Training College Enrolment by Sex")
+                ||report.contains("Public Secondary School Teachers by Sex")
+                ||report.contains("Secondary School Enrolment by Year and Sex")
+                ||report.contains("Land Topography")
                 ){
 
             if(report.matches("Births and Deaths by Sex")){
@@ -1501,11 +1549,6 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Female";
                 yLabel.setText("Enrolment & Access Indicators");
                 list = databaseEducation.getSecondaryenrolmentandaccessindicators(county,choice);
-            }else if (report.matches("Average Wage Earnings Per Employee in Private Sector")) {
-                label_1 = "Modern Sector";
-                label_2 = "Informal Sector";
-                yLabel.setText("Total Employment");
-                list = databaseLabour.getTotal_recorded_employment();
             }else if (report.matches("Average Wage Earnings Per Employee in Public Sector")) {
                 label_1 = "Agriculture";
                 label_2 = "Manufacturing";
@@ -1541,11 +1584,6 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Estates";
                 yLabel.setText("Yield");
                 list = databaseAgriculture.getProduction_Area_and_Average_Yield_of_Tea(selection);
-            }else if (report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")) {
-                label_1 = "Quantity (Tonnes)";
-                label_2 = "Value";
-                yLabel.setText("Amount");
-                list = databaseEnergy.getQuantity_and_Value_of_Imports_Exports_and_Reexports_of_Petroleum_Products(selection);
             }else if (report.contains("Women Groups Registration Contribution Women Enterprise Fund")) {
                 label_1 = "Number of Beneficiaries";
                 label_2 = "Enterprise Fund";
@@ -1561,6 +1599,46 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Female";
                 yLabel.setText("Number");
                 list = databasePopulation.getPopulation_by_Sex_and_School_Attendance_3_Years_and_Above(selection);
+            }else if (report.contains("ECDE Enrolment, Gross and Net Enrolment Rates")) {
+                label_1 = "Gross";
+                label_2 = "Net";
+                yLabel.setText("Rate");
+                list = databaseEducation.getECDE_Enrolment_Gross_and_Net_Enrolment_Rates(county);
+            }else if (report.contains("Number of Candidates by Sex in KCSE")) {
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Number");
+                list = databaseEducation.getNumber_of_Candidates_by_Sex_in_KCSE();
+            }else if (report.contains("Primary School Enrolment by Sex")) {
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Number");
+                list = databaseEducation.getPrimary_school_enrolments_by_sex();
+            }else if (report.contains("Primary School Teachers by Sex")) {
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Number");
+                list = databaseEducation.getPrimary_School_Teachers_by_Sex();
+            }else if (report.contains("Public Primary Teachers Training College Enrolment by Sex")) {
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Number");
+                list = databaseEducation.getPublic_Primary_Teachers_Training_College_Enrolment_by_Sex();
+            }else if (report.contains("Public Secondary School Teachers by Sex")) {
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Number");
+                list = databaseEducation.getPublic_Secondary_School_Teachers_by_Sex();
+            }else if (report.contains("Secondary School Enrolment by Year and Sex")) {
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Number");
+                list = databaseEducation.getSecondary_School_Enrolment_by_Year_and_Sex();
+            }else if (report.contains("Land Topography")) {
+                label_1 = "Highest Point";
+                label_2 = "Lowest Point";
+                yLabel.setText("Meters");
+                list = databaseLandClimate.getLand_Topography(county);
             }
 
             if (list != null) {
@@ -1907,6 +1985,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Insurance Coverage by Counties and Types")
                 ||report.matches("Nutritional Status of Women")
                 ||report.matches("Cases Handled By Various Courts")
+                ||report.matches("Quarterly Civil Engineering Cost Index")
                 ){
 
             if(report.matches("Population Projections by Selected Age Group")){
@@ -2000,6 +2079,13 @@ public class ReportGraph extends AppCompatActivity {
                 label_4 = "Supreme Court";
                 yLabel.setText("Cases");
                 list = databaseGovernance.getCases_handled_by_different_courts(selection);
+            }else if(report.matches("Quarterly Civil Engineering Cost Index")){
+                label_1 = "March";
+                label_2 = "June";
+                label_3 = "September";
+                label_4 = "December";
+                yLabel.setText("Amount");
+                list = databaseBuildingConstruction.getQuarterly_Civil_Engineering_Cost_Index(selection);
             }
 
             if (list != null) {

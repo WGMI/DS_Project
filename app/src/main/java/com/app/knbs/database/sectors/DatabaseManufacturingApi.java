@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.services.ReportLoader;
 import com.app.knbs.services.VolleySingleton;
 
 import org.json.JSONArray;
@@ -30,6 +31,7 @@ public class DatabaseManufacturingApi {
         this.context = context;
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
+    private ReportLoader loader = new ReportLoader(context);
 
     public void loadData(final ProgressDialog d){
         insertInto_manufacturing_quantum_indices_of_manufacturing_production(d);
@@ -48,7 +50,7 @@ public class DatabaseManufacturingApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/manufacturing/all_quantum_indices_of_manufacturing_production",
+                loader.getApi("Quantum Indices of Manufacturing Production"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -102,7 +104,7 @@ public class DatabaseManufacturingApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/manufacturing/all_per_change_in_quantum_indices_of_man_production",
+                loader.getApi("Percentage Change in Quantum Indices of Manufacturing Production"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

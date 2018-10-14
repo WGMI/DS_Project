@@ -191,4 +191,25 @@ public class DatabaseTourism {
         db.close();
         return list;
     }
+
+    public List<Sector_Data> getProportion_of_Population_That_Took_A_Trip(String county) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "SELECT proportion FROM tourism_population_proportion_that_took_trip e " +
+                "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("2015");
+            data.setSet_A(cursor.getString(0));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
 }

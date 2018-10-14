@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.services.ReportLoader;
 import com.app.knbs.services.VolleySingleton;
 
 import org.json.JSONArray;
@@ -30,11 +31,13 @@ public class DatabaseBuildingConstructionApi {
         this.context = context;
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
+    private ReportLoader loader = new ReportLoader(context);
 
     public void loadData(final ProgressDialog d){
         insertInto_building_and_construction_quarterly_non_residential_build_cost(d);
         insertInto_building_and_construction_quarterly_overal_construction_cost(d);
         insertInto_building_and_construction_quarterly_residential_bulding_cost(d);
+        insertInto_building_and_construction_quarterly_civil_engineering_cost_index(d);
     }
 
     private JsonArrayRequest policy(JsonArrayRequest request) {
@@ -45,12 +48,11 @@ public class DatabaseBuildingConstructionApi {
         return request;
     }
 
-    //Check table
-    private void insertInto_building_and_construction_amount(final ProgressDialog d){
+    private void insertInto_building_and_construction_quarterly_civil_engineering_cost_index(final ProgressDialog d){
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/building/all_quarterly_civil_engineering_cost_index",
+                loader.getApi("Quarterly Civil Engineering Cost Index"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -72,20 +74,24 @@ public class DatabaseBuildingConstructionApi {
                             long success = 0;
 
                             SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-                            db.delete("building_and_construction_amount",null,null);
+                            db.delete("building_and_construction_quarterly_civil_engineering_cost_index",null,null);
 
                             for(int i=0;i<yearArray.length();i++){
                                 ContentValues values = new ContentValues();
 
-                                values.put("buildingandconstruction_id",i+1);
-
+                                values.put("cost_index_id",i+1);
+                                values.put("category",categoryArray.getString(i));
+                                values.put("march",marchArray.getDouble(i));
+                                values.put("june",juneArray.getDouble(i));
+                                values.put("sept",septemberArray.getDouble(i));
+                                values.put("december",decemberArray.getDouble(i));
                                 values.put("year",yearArray.getInt(i));
 
-                                success = db.insertOrThrow("building_and_construction_amount",null,values);
+                                success = db.insertOrThrow("building_and_construction_quarterly_civil_engineering_cost_index",null,values);
                             }
 
                             db.close();
-                            Log.d(TAG, "building_and_construction_amount: " + success);
+                            Log.d(TAG, "building_and_construction_quarterly_civil_engineering_cost_index: " + success);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -109,7 +115,7 @@ public class DatabaseBuildingConstructionApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/building/all__quarterly_non_residential_build_cost",
+                loader.getApi("Quarterly Non Residential Build Cost"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -172,7 +178,7 @@ public class DatabaseBuildingConstructionApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/building/all_quarterly_overal_construction_cost",
+                loader.getApi("Quarterly Overall Construction Cost"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -235,7 +241,7 @@ public class DatabaseBuildingConstructionApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/building/all_quarterly_residential_bulding_cost",
+                loader.getApi("Quarterly Residential Bulding Cost"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

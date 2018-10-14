@@ -182,6 +182,69 @@ public class DatabaseEducation {
         return list;
     }
 
+    public List<Sector_Data> getPrimary_School_Teachers_by_Sex() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT year, SUM(CASE WHEN gender='Male' THEN number ELSE 0 END) AS Male, SUM(CASE WHEN gender='Female' THEN number ELSE 0 END) AS Female " +
+                "FROM education_public_primary_school_teachers_by_sex GROUP BY year ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPublic_Primary_Teachers_Training_College_Enrolment_by_Sex() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT year, SUM(CASE WHEN gender='Male' THEN number ELSE 0 END) AS Male, SUM(CASE WHEN gender='Female' THEN number ELSE 0 END) AS Female " +
+                "FROM education_public_primaryteachers_trainingcollege_enrolment GROUP BY year ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPublic_Secondary_School_Teachers_by_Sex() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT year, SUM(CASE WHEN gender='Male' THEN number ELSE 0 END) AS Male, SUM(CASE WHEN gender='Female' THEN number ELSE 0 END) AS Female " +
+                "FROM education_public_secondary_school_teachers_by_sex GROUP BY year ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
     public List<String> getKcpecandidatesandmeansubjectscore_subject_subject() {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         List<String> category = new ArrayList<>();
@@ -631,7 +694,11 @@ public class DatabaseEducation {
     public List<Sector_Data> getAdulteducationenrolmentbysexandsubcounty(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
-        String query = "SELECT year,male,female FROM education_csa_adulteducationenrolmentbysexandsubcounty e " +
+        String query = "SELECT " +
+                "year," +
+                "SUM(CASE WHEN gender='Male' THEN number ELSE 0 END) AS Male," +
+                "SUM(CASE WHEN gender='Female' THEN number ELSE 0 END) AS Female "+
+                "FROM education_csa_adulteducationenrolmentbysexandsubcounty e " +
                 "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"'  GROUP BY year ";
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
@@ -873,7 +940,9 @@ public class DatabaseEducation {
     public List<Sector_Data> getPrimaryschoolsbycategoryandsubcounty(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
-        String query = "SELECT year,SUM(public),SUM(private) FROM education_csa_primaryschoolsbycategoryandsubcounty e " +
+        String query = "SELECT year,SUM(CASE WHEN category='private' then number else end 0) as Private," +
+                "SUM(CASE WHEN category='public' then number else end 0) as Public " +
+                "FROM education_csa_primaryschoolsbycategoryandsubcounty e " +
                 "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"' GROUP BY year ";
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
@@ -1074,5 +1143,97 @@ public class DatabaseEducation {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(request);
+    }
+
+    public List<Sector_Data> getECDE_Enrolment_Gross_and_Net_Enrolment_Rates(String county) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT year, AVG(CASE WHEN category='public' THEN no_of_centres ELSE 0 END) AS 'Public' " +
+                " ,SUM(CASE WHEN category='private' THEN no_of_centres ELSE 0 END) AS 'Private' " +
+                " FROM education_csa_ecdecentresbycategoryandsubcounty e  " +
+                " JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"' GROUP BY year ";
+
+        Cursor cursor = db.rawQuery(query, null);
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getNumber_of_Candidates_by_Sex_in_KCSE() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "SELECT " +
+                "year," +
+                "sum(case when gender = 'Male' then number else end 0) as Male, " +
+                "sum(case when gender = 'Female' then number else end 0) as Female " +
+                "from education_number_of_candidates_by_sex_in_kcse";
+
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPrimary_school_enrolments_by_sex() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "SELECT " +
+                "year, boys, girls from education_primary_school_enrolments_by_sex";
+
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getSecondary_School_Enrolment_by_Year_and_Sex() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "SELECT " +
+                "year, boys, girls from education_secondary_school_enrolment_by_sex";
+
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
     }
 }

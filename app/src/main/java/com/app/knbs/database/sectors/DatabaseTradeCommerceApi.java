@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.services.ReportLoader;
 import com.app.knbs.services.VolleySingleton;
 
 import org.json.JSONArray;
@@ -30,13 +31,15 @@ public class DatabaseTradeCommerceApi {
         this.context = context;
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
+    private ReportLoader loader = new ReportLoader(context);
 
     public void loadData(final ProgressDialog d){
+        insertInto_trade_and_commerce_balance_of_trade(d);//Revisit: Repeating itself
         insertInto_trade_and_commerce_values_of_principal_imports(d);
         insertInto_trade_and_commerce_values_of_principal_domestic_exports(d);
-        insertInto_trade_and_commerce_balance_of_trade(d);
         insertInto_trade_and_commerce_quantities_of_principle_imports(d);
         insertInto_trade_and_commerce_quantities_of_principle_domestic_exports(d);
+
         insertInto_trade_and_commerce_value_of_total_exports_european_union(d);
         insertInto_trade_and_commerce_value_total_exports_east_africa_communities(d);
         insertInto_trade_and_commerce_value_of_total_exports_all_destinations(d);
@@ -55,7 +58,7 @@ public class DatabaseTradeCommerceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/trade/all_trade_and_commerce_values_of_principal_imports",
+                loader.getApi("Values of Principal Imports"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -109,7 +112,7 @@ public class DatabaseTradeCommerceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/trade/all_trade_and_commerce_values_of_principal_domestic_exports",
+                loader.getApi("Values of Principal Domestic Exports"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -163,7 +166,7 @@ public class DatabaseTradeCommerceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/trade/all_trade_and_commerce_balance_of_trade",
+                loader.getApi("Balance of Trade"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -220,7 +223,7 @@ public class DatabaseTradeCommerceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/trade/all_trade_and_commerce_quantities_principal_imports",
+                loader.getApi("Quantities of Principle Imports"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -277,7 +280,7 @@ public class DatabaseTradeCommerceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/trade/all_trade_and_commerce_quantities_principal_domestic_exports",
+                loader.getApi("Quantities of Principle Domestic Exports"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -331,7 +334,7 @@ public class DatabaseTradeCommerceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/trade/all_trade_and_commerce_value_of_total_exports_european_union",
+                loader.getApi("Value of Total Exports to Eurpoean Union"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -385,7 +388,7 @@ public class DatabaseTradeCommerceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/trade/all_trade_and_commerce_value_total_exports_east_africa_communities",
+                loader.getApi("Value of Total Exports to East African Communities"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -439,7 +442,7 @@ public class DatabaseTradeCommerceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/trade/all_trade_and_commerce_value_of_total_exports_all_destinations",
+                loader.getApi("Value of Total Exports to All Destinations"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -496,7 +499,7 @@ public class DatabaseTradeCommerceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/trade/all_trade_and_commerce_import_trade_africa_countries",
+                loader.getApi("Trade Imports with African Countries"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

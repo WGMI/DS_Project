@@ -42,14 +42,13 @@ public class DatabaseEducationApi {
     private ReportLoader loader = new ReportLoader(context);
 
     public void loadData(final ProgressDialog d){
-        //test();
-        insertInto_Approved_degree_diploma_programs(d);
+        //Too slow. Needs work.
+        /*insertInto_Approved_degree_diploma_programs(d);
         insertInto_education_studentenrollmentbysextechnicalinstitutions(d);
         insertInto_education_studentenrollmentpublicuniversities(d);
         insertInto_education_edstat_kcpe_examination_candidature(d);
         insertInto_education_edstat_kcpe_examination_results_by_subject(d);
 
-        /*
         insertInto_education_edstat_kcse_examination_results(d);
         insertInto_education_csa_adulteducationcentresbysubcounty(d);
         insertInto_education_csa_adulteducationproficiencytestresults(d);
@@ -60,7 +59,16 @@ public class DatabaseEducationApi {
         insertInto_education_csa_teachertrainingcolleges(d);
         insertInto_education_csa_studentenrolmentinyouthpolytechnics(d);
         insertInto_education_csa_secondaryschoolenrollmentbyclasssexsubcounty(d);
-        */
+        insertInto_education_csa_adulteducationenrolmentbysexandsubcounty(d);
+
+        insertInto_education_number_of_candidates_by_sex_in_kcse(d);
+        insertInto_education_csa_primaryschoolsbycategoryandsubcounty(d);
+        insertInto_education_primary_school_enrolments_by_sex(d);*/
+        insertInto_education_public_primary_school_teachers_by_sex(d);
+        insertInto_education_public_primaryteachers_trainingcollege_enrolment(d);
+
+        insertInto_education_public_secondary_school_teachers_by_sex(d);
+        insertInto_education_secondary_school_enrolment_by_sex(d);
     }
 
     private JsonArrayRequest policy(JsonArrayRequest request) {
@@ -1007,12 +1015,12 @@ public class DatabaseEducationApi {
         queue.add(request);
     }
 
-    //Check table
     private void insertInto_education_csa_primaryschoolsbycategoryandsubcounty(final ProgressDialog d){
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        Log.d(TAG, "insertInto_education_csa_primaryschoolsbycategoryandsubcounty: " + loader.getApi("Primary Schools By Category and Sub County"));
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/education/all_primary_category_subcounty",
+                loader.getApi("Primary Schools By Category and Sub County"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray array) {
@@ -1041,8 +1049,8 @@ public class DatabaseEducationApi {
                                 values.put("primary_schools_id",i);
                                 values.put("county_id",countyHelper.getCountyId(countiesArray.getString(i)));
                                 values.put("sub_county_id",countyHelper.getSubCountyId(subCountiesArray.getString(i)));
-                                //values.put("public",oneArray.getInt(i));
-                                //values.put("private",twoArray.getInt(i));
+                                values.put("category",catArray.getString(i));
+                                values.put("number",schoolsArray.getInt(i));
                                 values.put("year",yearArray.getString(i));
 
                                 success = db.insertOrThrow("education_csa_primaryschoolsbycategoryandsubcounty",null,values);
@@ -1051,6 +1059,415 @@ public class DatabaseEducationApi {
                             db.close();
                             d.dismiss();
                             Log.d(TAG, "education_csa_primaryschoolsbycategoryandsubcounty: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        d.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d("test_error", "onResponse: " + volleyError.toString());
+                    }
+                }
+        );
+
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_education_csa_adulteducationenrolmentbysexandsubcounty(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("Adult Education Enrolment by Sex and Sub County"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject yearObject = array.getJSONObject(0);
+                            JSONObject countiesObject = array.getJSONObject(1);
+                            JSONObject subCountiesObject = array.getJSONObject(2);
+                            JSONObject numObject = array.getJSONObject(3);
+                            JSONObject genderObject = array.getJSONObject(4);
+
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+                            JSONArray countiesArray = countiesObject.getJSONArray("data");
+                            JSONArray subCountiesArray = subCountiesObject.getJSONArray("data");
+                            JSONArray numArray = numObject.getJSONArray("data");
+                            JSONArray genderArray = genderObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("education_csa_adulteducationenrolmentbysexandsubcounty",null,null);
+
+                            CountyHelper countyHelper = new CountyHelper();
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+                                values.put("adult_enrolment_id",i);
+                                values.put("county_id",countyHelper.getCountyId(countiesArray.getString(i)));
+                                values.put("sub_county_id",countyHelper.getSubCountyId(subCountiesArray.getString(i)));
+                                values.put("number",numArray.getInt(i));
+                                values.put("gender",genderArray.getString(i));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("education_csa_adulteducationenrolmentbysexandsubcounty",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "education_csa_adulteducationenrolmentbysexandsubcounty: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        d.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d("test_error", "onResponse: " + volleyError.toString());
+                    }
+                }
+        );
+
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_education_number_of_candidates_by_sex_in_kcse(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("Number of Candidates by Sex in KCSE"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject yearObject = array.getJSONObject(0);
+                            JSONObject numberObject = array.getJSONObject(1);
+                            JSONObject propObject = array.getJSONObject(2);
+                            JSONObject genderObject = array.getJSONObject(3);
+
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+                            JSONArray numArray = numberObject.getJSONArray("data");
+                            JSONArray propArray = propObject.getJSONArray("data");
+                            JSONArray genderArray = genderObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("education_number_of_candidates_by_sex_in_kcse",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+                                values.put("candidates_id",i);
+                                values.put("number",numArray.getInt(i));
+                                values.put("proportion",propArray.getDouble(i));
+                                values.put("gender",genderArray.getString(i));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("education_number_of_candidates_by_sex_in_kcse",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "education_number_of_candidates_by_sex_in_kcse: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        d.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d("test_error", "onResponse: " + volleyError.toString());
+                    }
+                }
+        );
+
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_education_primary_school_enrolments_by_sex(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("Primary School Enrolment by Sex"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject yearObject = array.getJSONObject(0);
+                            JSONObject boysObject = array.getJSONObject(1);
+                            JSONObject girlsObject = array.getJSONObject(2);
+                            JSONObject totalObject = array.getJSONObject(3);
+                            JSONObject percObject = array.getJSONObject(4);
+                            JSONObject parityObject = array.getJSONObject(4);
+
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+                            JSONArray boysArray = boysObject.getJSONArray("data");
+                            JSONArray girlsArray = girlsObject.getJSONArray("data");
+                            JSONArray totalArray = totalObject.getJSONArray("data");
+                            JSONArray percArray = percObject.getJSONArray("data");
+                            JSONArray parityArray = parityObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("education_primary_school_enrolments_by_sex",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+                                values.put("id",i);
+                                values.put("boys",boysArray.getInt(i));
+                                values.put("girls",girlsArray.getInt(i));
+                                values.put("total",totalArray.getInt(i));
+                                values.put("percentage_girls",percArray.getDouble(i));
+                                values.put("parity_index",parityArray.getInt(i));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("education_primary_school_enrolments_by_sex",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "education_primary_school_enrolments_by_sex: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        d.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d("test_error", "onResponse: " + volleyError.toString());
+                    }
+                }
+        );
+
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_education_public_primary_school_teachers_by_sex(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("Primary School Teachers by Sex"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject yearObject = array.getJSONObject(0);
+                            JSONObject numberObject = array.getJSONObject(1);
+                            JSONObject propObject = array.getJSONObject(2);
+                            JSONObject genderObject = array.getJSONObject(3);
+
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+                            JSONArray numArray = numberObject.getJSONArray("data");
+                            JSONArray propArray = propObject.getJSONArray("data");
+                            JSONArray genderArray = genderObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("education_public_primary_school_teachers_by_sex",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+                                values.put("teacher_id",i+1);
+                                values.put("number",numArray.getInt(i));
+                                values.put("proportion",propArray.getDouble(i));
+                                values.put("gender",genderArray.getString(i));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("education_public_primary_school_teachers_by_sex",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "education_public_primary_school_teachers_by_sex: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        d.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d("test_error", "onResponse: " + volleyError.toString());
+                    }
+                }
+        );
+
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_education_public_primaryteachers_trainingcollege_enrolment(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("Public Primary Teachers Training College Enrolment by Sex"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject yearObject = array.getJSONObject(0);
+                            JSONObject numberObject = array.getJSONObject(1);
+                            JSONObject propObject = array.getJSONObject(2);
+                            JSONObject genderObject = array.getJSONObject(3);
+
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+                            JSONArray numArray = numberObject.getJSONArray("data");
+                            JSONArray propArray = propObject.getJSONArray("data");
+                            JSONArray genderArray = genderObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("education_public_primaryteachers_trainingcollege_enrolment",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+                                values.put("candidate_id",i+1);
+                                values.put("number",numArray.getInt(i));
+                                values.put("proportion",propArray.getDouble(i));
+                                values.put("gender",genderArray.getString(i));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("education_public_primaryteachers_trainingcollege_enrolment",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "education_public_primaryteachers_trainingcollege_enrolment: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        d.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d("test_error", "onResponse: " + volleyError.toString());
+                    }
+                }
+        );
+
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_education_public_secondary_school_teachers_by_sex(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("Public Secondary School Teachers by Sex"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject yearObject = array.getJSONObject(0);
+                            JSONObject numberObject = array.getJSONObject(1);
+                            JSONObject propObject = array.getJSONObject(2);
+                            JSONObject genderObject = array.getJSONObject(3);
+
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+                            JSONArray numArray = numberObject.getJSONArray("data");
+                            JSONArray propArray = propObject.getJSONArray("data");
+                            JSONArray genderArray = genderObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("education_public_secondary_school_teachers_by_sex",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+                                values.put("candidate_id",i+1);
+                                values.put("number",numArray.getInt(i));
+                                values.put("proportion",propArray.getDouble(i));
+                                values.put("gender",genderArray.getString(i));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("education_public_secondary_school_teachers_by_sex",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "education_public_secondary_school_teachers_by_sex: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        d.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d("test_error", "onResponse: " + volleyError.toString());
+                    }
+                }
+        );
+
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_education_secondary_school_enrolment_by_sex(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("Secondary School Enrolment by Year and Sex"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject yearObject = array.getJSONObject(0);
+                            JSONObject boysObject = array.getJSONObject(1);
+                            JSONObject girlsObject = array.getJSONObject(2);
+                            JSONObject totalObject = array.getJSONObject(3);
+                            JSONObject percObject = array.getJSONObject(4);
+                            JSONObject parityObject = array.getJSONObject(4);
+
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+                            JSONArray boysArray = boysObject.getJSONArray("data");
+                            JSONArray girlsArray = girlsObject.getJSONArray("data");
+                            JSONArray totalArray = totalObject.getJSONArray("data");
+                            JSONArray percArray = percObject.getJSONArray("data");
+                            JSONArray parityArray = parityObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("education_secondary_school_enrolment_by_sex",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+                                values.put("enrolment_id",i);
+                                values.put("boys",boysArray.getInt(i));
+                                values.put("girls",girlsArray.getInt(i));
+                                values.put("total",totalArray.getInt(i));
+                                values.put("percentage_girls",percArray.getDouble(i));
+                                values.put("parity_index",parityArray.getDouble(i));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("education_secondary_school_enrolment_by_sex",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "education_secondary_school_enrolment_by_sex: " + success);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

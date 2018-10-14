@@ -15,12 +15,12 @@ public class CountyHelper {
     public int getCountyId(String county){
         county = county.trim();
         int id = Arrays.asList(counties).indexOf(county);
-        return id;
+        return id + 1;
     }
 
     public int getSubCountyId(String subCounty){
         subCounty = subCounty.trim();
         int id = Arrays.asList(sub_counties).indexOf(subCounty);
-        return id;
+        return id + 1;
     }
 }

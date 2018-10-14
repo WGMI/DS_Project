@@ -11,7 +11,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.app.knbs.database.CountyHelper;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.services.ReportLoader;
 import com.app.knbs.services.VolleySingleton;
 
 import org.json.JSONArray;
@@ -30,6 +32,7 @@ public class DatabaseTourismApi {
         this.context = context;
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
+    private ReportLoader loader = new ReportLoader(context);
 
     public void loadData(final ProgressDialog d){
         insertInto_tourism_tourist_arrivals(d);
@@ -37,9 +40,11 @@ public class DatabaseTourismApi {
         insertInto_tourism_departures(d);
         insertInto_tourism_earnings(d);
         insertInto_tourism_hotel_occupancy_by_residence(d);
+
         insertInto_tourism_hotel_occupancy_by_zone(d);
         insertInto_tourism_visitors_to_parks(d);
         insertInto_tourism_visitors_to_museums(d);
+        insertInto_tourism_population_proportion_that_took_trip(d);
     }
 
     private JsonArrayRequest policy(JsonArrayRequest request) {
@@ -54,7 +59,7 @@ public class DatabaseTourismApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/tourism/tourism_arrivals",
+                loader.getApi("Tourist Arrivals"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -117,7 +122,7 @@ public class DatabaseTourismApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/tourism/all_tourism_conferences",
+                loader.getApi("Tourism Conferences"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -174,7 +179,7 @@ public class DatabaseTourismApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/tourism/all_tourism_departures",
+                loader.getApi("Tourism Departures"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -237,7 +242,7 @@ public class DatabaseTourismApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/tourism/all_tourism_earnings",
+                loader.getApi("Tourism Earnings"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -284,11 +289,66 @@ public class DatabaseTourismApi {
         queue.add(request);
     }
 
+    private void insertInto_tourism_population_proportion_that_took_trip(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                //loader.getApi("Proportion of Population That Took A Trip"),
+                "http://156.0.232.97:8000/tourism/all_tourism_population_proportion_that_took_trip",
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            JSONObject countiesObject  = response.getJSONObject(0);
+                            JSONObject propObject  = response.getJSONObject(1);
+                            JSONObject numObject  = response.getJSONObject(1);
+
+                            JSONArray countiesArray = countiesObject.getJSONArray("data");
+                            JSONArray propArray = propObject.getJSONArray("data");
+                            JSONArray numArray = numObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("tourism_population_proportion_that_took_trip",null,null);
+
+                            for(int i=0;i<countiesArray.length();i++){
+                                ContentValues values = new ContentValues();
+
+                                values.put("population_id",i+1);
+                                values.put("county_id",new CountyHelper().getCountyId(countiesArray.getString(i)));
+                                values.put("proportion",propArray.getDouble(i));
+                                values.put("no_of_individuals",numArray.getInt(i));
+
+                                success = db.insertOrThrow("tourism_population_proportion_that_took_trip",null,values);
+                            }
+
+                            db.close();
+                            Log.d(TAG, "tourism_population_proportion_that_took_trip: " + success);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        d.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("test_error", "onResponse: " + error.toString());
+                    }
+                }
+        );
+
+        request = policy(request);
+        queue.add(request);
+    }
+
     private void insertInto_tourism_hotel_occupancy_by_residence(final ProgressDialog d){
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/tourism/all_tourism_hotel_occupancy_by_residence",
+                loader.getApi("Hotel Occupancy by Residence"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -454,7 +514,7 @@ public class DatabaseTourismApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/tourism/all_tourism_hotel_occupancy_by_zone",
+                loader.getApi("Hotel Occupancy by Zone"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -549,7 +609,7 @@ public class DatabaseTourismApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/tourism/all_tourism_visitor_to_parks",
+                loader.getApi("Visitors to Parks"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -630,7 +690,7 @@ public class DatabaseTourismApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/tourism/all_tourism_visitors_to_museums",
+                loader.getApi("Visitors to Museums"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

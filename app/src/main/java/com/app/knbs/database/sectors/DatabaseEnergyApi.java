@@ -11,7 +11,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.app.knbs.database.CountyHelper;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.services.ReportLoader;
 import com.app.knbs.services.VolleySingleton;
 
 import org.json.JSONArray;
@@ -30,12 +32,16 @@ public class DatabaseEnergyApi {
         this.context = context;
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
+    private ReportLoader loader = new ReportLoader(context);
 
     public void loadData(final ProgressDialog d){
         insertInto_energy_average_retail_prices_of_selected_petroleum_products(d);
         insertInto_energy_net_domestic_sale_of_petroleum_fuels_by_consumer_category(d);
         insertInto_energy_electricity_demand_and_supply(d);
         insertInto_energy_petroleum_supply_and_demand(d);
+        insertInto_energy_value_and_quantity_of_imports_exports(d);
+
+        insertInto_energy_averagemonthlypumppricesforfuelbycategory(d);
     }
 
     private JsonArrayRequest policy(JsonArrayRequest request) {
@@ -50,7 +56,7 @@ public class DatabaseEnergyApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/energy/all_average_retail_prices_of_selected_petroleum_products",
+                loader.getApi("Average Retail Prices of Selected Petroleum Products"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -107,7 +113,7 @@ public class DatabaseEnergyApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/energy/all_net_domestic_sale_of_petroleum_fuels_by_consumer_category",
+                loader.getApi("Net Domestic Sale of Petroleum Fuels by Consumer Category"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -161,7 +167,7 @@ public class DatabaseEnergyApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/energy/all_electricity_demand_and_supply",
+                loader.getApi("Electricity Demand and Supply"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -216,7 +222,7 @@ public class DatabaseEnergyApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/energy/all_installed_and_effective_capacity_of_electricity",
+                loader.getApi("Installed and Effective Capacity of Electricity"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -270,7 +276,7 @@ public class DatabaseEnergyApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/energy/all_petroleum_supply_and_demand",
+                loader.getApi("Petroleum Supply and Demand"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -327,7 +333,7 @@ public class DatabaseEnergyApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/energy/all_value_and_quantity_of_imports_exports",
+                loader.getApi("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -361,6 +367,69 @@ public class DatabaseEnergyApi {
 
                             db.close();
                             Log.d(TAG, "energy_value_and_quantity_of_imports_exports: " + success);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        d.dismiss();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("test_error", "onResponse: " + error.toString());
+                    }
+                }
+        );
+
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_energy_averagemonthlypumppricesforfuelbycategory(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("Average Monthly Pump Prices For Fuel By Category"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            JSONObject yearObject  = response.getJSONObject(0);
+                            JSONObject superObject  = response.getJSONObject(1);
+                            JSONObject dieselObject  = response.getJSONObject(2);
+                            JSONObject keroseneObject  = response.getJSONObject(3);
+                            JSONObject countiesObject  = response.getJSONObject(4);
+                            JSONObject monthObject  = response.getJSONObject(5);
+
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+                            JSONArray superArray = superObject.getJSONArray("data");
+                            JSONArray dieArray = dieselObject.getJSONArray("data");
+                            JSONArray kerArray = keroseneObject.getJSONArray("data");
+                            JSONArray countiesArray = countiesObject.getJSONArray("data");
+                            JSONArray monthArray = monthObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("energy_averagemonthlypumppricesforfuelbycategory",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+
+                                values.put("count_id",i+1);
+                                values.put("county_id",new CountyHelper().getCountyId(countiesArray.getString(i)));
+                                values.put("month_id",1);
+                                values.put("super_petrol",superArray.getDouble(i));
+                                values.put("diesel",dieArray.getDouble(i));
+                                values.put("kerosene",kerArray.getDouble(i));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("energy_averagemonthlypumppricesforfuelbycategory",null,values);
+                            }
+
+                            db.close();
+                            Log.d(TAG, "energy_averagemonthlypumppricesforfuelbycategory: " + success);
 
                         } catch (JSONException e) {
                             e.printStackTrace();

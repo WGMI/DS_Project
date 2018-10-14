@@ -35,7 +35,6 @@ public class ReportLoader {
     DatabaseHelper dbHelper = new DatabaseHelper(context);
 
     public ReportLoader(Context context) {
-        Log.d(TAG, "ReportLoader: " + getApi("Place of Delivery"));
         this.context = context;
     }
 
@@ -113,7 +112,7 @@ public class ReportLoader {
     public String getApi(String report){
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
         Cursor cursor =
-                db.rawQuery("select api_url from sectors_from_api where report = '"+report.trim()+"'",null);
+                db.rawQuery("select api_url from sectors_from_api where report LIKE '"+report.trim()+"'",null);
         String api = "failed";
         if(cursor.moveToFirst()){
             api = cursor.getString(0);

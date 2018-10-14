@@ -14,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.app.knbs.database.CountyHelper;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.services.ReportLoader;
 import com.app.knbs.services.VolleySingleton;
 
 import org.json.JSONArray;
@@ -35,23 +36,8 @@ public class DatabaseFinanceApi {
         this.context = context;
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
-
-    public void test(){
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        Cursor cursor = db.rawQuery("SELECT * FROM education_csa_adulteducationcentresbysubcounty where county_id = 30 OR county_id = '30'",null);
-
-        while(cursor.moveToNext()){
-
-            Log.d(TAG + "test", "test: " + cursor.getInt(0) + "\n"
-                    + cursor.getInt(1) + "\n"
-                    + cursor.getInt(2) + "\n"
-                    + cursor.getInt(3) + "\n"
-                    + cursor.getInt(4) + "\n" );
-        }
-
-        cursor.close();
-        db.close();
-    }
+    private ReportLoader loader = new ReportLoader(context);
+    private CountyHelper countyHelper = new CountyHelper();
 
     public void loadData(final ProgressDialog d){
         insertInto_finance_economic_classification_revenue(d);//RECHECK
@@ -59,8 +45,14 @@ public class DatabaseFinanceApi {
         insertInto_finance_national_government_expenditure(d);
         insertInto_finance_national_government_expenditure_purpose(d);
         insertInto_finance_outstanding_debt_international_organization(d);//RECHECK
+
         insertInto_finance_outstanding_debt_lending_country(d);//RECHECK
         insertInto_finance_statement_of_national_government_operations(d);
+        insertInto_finance_cdf_allocation_by_constituency(d);
+        insertInto_finance_county_budget_allocation(d);
+        insertInto_finance_county_expenditure(d);
+
+        //insertInto_finance_county_revenue(d);
     }
 
     private JsonArrayRequest policy(JsonArrayRequest request) {
@@ -75,7 +67,7 @@ public class DatabaseFinanceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/finance/all_economic_revenue",
+                loader.getApi("Economic Classification of National Government Revenue"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray array) {
@@ -202,7 +194,7 @@ public class DatabaseFinanceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/finance/all_excise_revenue",
+                loader.getApi("Excise Revenue Commodity"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray array) {
@@ -284,7 +276,7 @@ public class DatabaseFinanceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/finance/all_national_expenditure",
+                loader.getApi("Economic Classification of National Government Expenditure"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray array) {
@@ -396,7 +388,7 @@ public class DatabaseFinanceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/finance/all_finance_national_government_expenditure_purpose",
+                loader.getApi("National Government Expenditure Purpose"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray array) {
@@ -538,7 +530,7 @@ public class DatabaseFinanceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/finance/all_finance_outstanding_debt_international_organization",
+                loader.getApi("Outstanding Debt International Organization"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray array) {
@@ -559,40 +551,22 @@ public class DatabaseFinanceApi {
                             JSONArray commBanksArray = commBanksObject.getJSONArray("data");
                             JSONArray othersArray = othersObject.getJSONArray("data");
 
-                            List<Integer> years = new ArrayList<>();
-                            List<Double> IDAList = new ArrayList<>();
-                            List<Double> EEC_EIBList = new ArrayList<>();
-                            List<Double> IMFList = new ArrayList<>();
-                            List<Double> Adf_adbList = new ArrayList<>();
-                            List<Double> commBanksList = new ArrayList<>();
-                            List<Double> othersList = new ArrayList<>();
-
-                            for(int i=0;i<yearArray.length();i++){
-                                years.add(yearArray.getInt(i));
-                                IDAList.add(IDAArray.getDouble(i));
-                                EEC_EIBList.add(EEC_EIBArray.getDouble(i));
-                                IMFList.add(IMFArray.getDouble(i));
-                                Adf_adbList.add(Adf_adbArray.getDouble(i));
-                                commBanksList.add(commBanksArray.getDouble(i));
-                                othersList.add(othersArray.getDouble(i));
-                            }
-
                             long success = 0;
 
                             SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
                             db.delete("finance_outstanding_debt_international_organization",null,null);
 
-                            for(int i=0;i<yearArray.length();i++){
+                            for(int i=0;i<IDAArray.length();i++){
                                 ContentValues values = new ContentValues();
 
                                 values.put("outstanding_debt",i+1);
-                                values.put("year",years.get(i));
-                                values.put("ida",IDAList.get(i));
-                                values.put("eec_eib",EEC_EIBList.get(i));
-                                values.put("imf",IMFList.get(i));
-                                values.put("adf_adb",Adf_adbList.get(i));
-                                values.put("commercial_banks",commBanksList.get(i));
-                                values.put("others",othersList.get(i));
+                                values.put("year",yearArray.getInt(i));
+                                values.put("ida",IDAArray.getDouble(i));
+                                values.put("eec_eib",EEC_EIBArray.getDouble(i));
+                                values.put("imf",IMFArray.getDouble(i));
+                                values.put("adf_adb",Adf_adbArray.getDouble(i));
+                                values.put("commercial_banks",commBanksArray.getDouble(i));
+                                values.put("others",othersArray.getDouble(i));
 
                                 success = db.insertOrThrow("finance_outstanding_debt_international_organization",null,values);
                             }
@@ -620,7 +594,7 @@ public class DatabaseFinanceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/finance/all_finance_outstanding_debt_lending_country",
+                loader.getApi("Outstanding Debt Lending Country"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray array) {
@@ -661,7 +635,7 @@ public class DatabaseFinanceApi {
                             List<Double> Belgium = new ArrayList<>();
                             List<Double> Other = new ArrayList<>();
 
-                            for(int i=0;i<yearArray.length();i++){
+                            for(int i=0;i<GermanyArray.length();i++){
                                 years.add(yearArray.getInt(i));
                                 Germany.add(GermanyArray.getDouble(i));
                                 Japan.add(JapanArray.getDouble(i));
@@ -675,13 +649,12 @@ public class DatabaseFinanceApi {
                                 Other.add(OtherArray.getDouble(i));
                             }
 
-                            Log.d(TAG, "onResponse: ");
                             long success = 0;
 
                             SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
                             db.delete("finance_outstanding_debt_lending_country",null,null);
 
-                            for(int i=0;i<yearArray.length();i++){
+                            for(int i=0;i<GermanyArray.length();i++){
                                 ContentValues values = new ContentValues();
 
                                 values.put("lending_country_id",i+1);
@@ -724,7 +697,7 @@ public class DatabaseFinanceApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/finance/all_finance_statement_of_national_government_operations",
+                loader.getApi("Statement of National Government Operations"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray array) {
@@ -775,6 +748,251 @@ public class DatabaseFinanceApi {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         Log.d(TAG, "finance_national_government_expenditure: " + volleyError.toString());
+                    }
+                }
+        );
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_finance_cdf_allocation_by_constituency(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("CDF Allocation"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject countyObject = array.getJSONObject(0);
+                            JSONObject subCountyObject = array.getJSONObject(1);
+                            JSONObject cdfObject = array.getJSONObject(2);
+                            JSONObject yearObject = array.getJSONObject(3);
+
+                            JSONArray countiesArray = countyObject.getJSONArray("data");
+                            JSONArray subCountiesArray = subCountyObject.getJSONArray("data");
+                            JSONArray cdfArray = cdfObject.getJSONArray("data");
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("finance_cdf_allocation",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+
+                                values.put("cdfallocation_id",i+1);
+                                values.put("county_id",countyHelper.getCountyId(countiesArray.getString(i)));
+                                values.put("subcounty_id",countyHelper.getSubCountyId(subCountiesArray.getString(i)));
+                                values.put("cdfallocation",cdfArray.getInt(i));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("finance_cdf_allocation",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "finance_cdf_allocation: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d(TAG, "finance_national_government_expenditure: " + volleyError.toString());
+                    }
+                }
+        );
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_finance_county_budget_allocation(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("County Budget Allocation"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject countyObject = array.getJSONObject(0);
+                            JSONObject reccurentObject = array.getJSONObject(1);
+                            JSONObject devObject = array.getJSONObject(2);
+                            JSONObject totalObject = array.getJSONObject(3);
+                            JSONObject yearObject = array.getJSONObject(4);
+
+                            JSONArray countiesArray = countyObject.getJSONArray("data");
+                            JSONArray reccArray = reccurentObject.getJSONArray("data");
+                            JSONArray devArray = devObject.getJSONArray("data");
+                            JSONArray totalArray = totalObject.getJSONArray("data");
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("finance_county_budget_allocation",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+
+                                values.put("budget_allocation_ID",i+1);
+                                values.put("county_id",countyHelper.getCountyId(countiesArray.getString(i)));
+                                values.put("recurrent",reccArray.getDouble(i));
+                                values.put("development",devArray.getDouble(i));
+                                values.put("total",totalArray.getDouble(i));
+                                values.put("year",yearArray.getString(i));
+
+                                success = db.insertOrThrow("finance_county_budget_allocation",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "finance_county_budget_allocation: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d(TAG, "finance_national_government_expenditure: " + volleyError.toString());
+                    }
+                }
+        );
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_finance_county_expenditure(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("County Expenditure"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject countiesObject = array.getJSONObject(0);
+                            JSONObject compObject = array.getJSONObject(1);
+                            JSONObject goodsObject = array.getJSONObject(2);
+                            JSONObject totalObject = array.getJSONObject(16);
+                            JSONObject yearObject = array.getJSONObject(17);
+
+                            JSONArray countiesArray = countiesObject.getJSONArray("data");
+                            JSONArray compArray = compObject.getJSONArray("data");
+                            JSONArray goodsArray = goodsObject.getJSONArray("data");
+                            JSONArray totalArray = totalObject.getJSONArray("data");
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("finance_county_expenditure",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+
+                                values.put("countyexpenditure_id",i+1);
+                                values.put("county_id",countyHelper.getCountyId(countiesArray.getString(i)));
+                                values.put("compensation_employees",compArray.getDouble(i));
+                                values.put("goods_services",goodsArray.getDouble(i));
+                                values.put("subsidies",goodsArray.getDouble(i));
+                                values.put("grants_internationalorganisation",goodsArray.getDouble(i));
+                                values.put("grants_governmentunits",goodsArray.getDouble(i));
+                                values.put("othergrants",goodsArray.getDouble(i));
+                                values.put("capitalgrants",goodsArray.getDouble(i));
+                                values.put("socialbenefits",goodsArray.getDouble(i));
+                                values.put("otherexpense",goodsArray.getDouble(i));
+                                values.put("buildingstructures",goodsArray.getDouble(i));
+                                values.put("plantmachinery_equipment",goodsArray.getDouble(i));
+                                values.put("inventories",goodsArray.getDouble(i));
+                                values.put("otherassets",goodsArray.getDouble(i));
+                                values.put("acquisition_financialassets",goodsArray.getDouble(i));
+                                values.put("interest_debt",goodsArray.getDouble(i));
+                                values.put("total",totalArray.getDouble(i));
+                                values.put("year",yearArray.getString(i));
+
+                                success = db.insertOrThrow("finance_county_expenditure",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "finance_county_expenditure: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d(TAG, "finance_national_government_expenditure: " + volleyError.toString());
+                    }
+                }
+        );
+        request = policy(request);
+        queue.add(request);
+    }
+
+    private void insertInto_finance_county_revenue(final ProgressDialog d){
+        d.show();
+        RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
+        JsonArrayRequest request = new JsonArrayRequest(
+                loader.getApi("County Revenue"),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray array) {
+                        try {
+                            JSONObject countiesObject = array.getJSONObject(0);
+                            JSONObject estObject = array.getJSONObject(1);
+                            JSONObject grantObject = array.getJSONObject(2);
+                            JSONObject shareObject = array.getJSONObject(3);
+                            JSONObject totalObject = array.getJSONObject(4);
+                            JSONObject yearObject = array.getJSONObject(5);
+
+                            JSONArray countiesArray = countiesObject.getJSONArray("data");
+                            JSONArray estArray = estObject.getJSONArray("data");
+                            JSONArray grantArray = grantObject.getJSONArray("data");
+                            JSONArray shareArray = shareObject.getJSONArray("data");
+                            JSONArray totalArray = totalObject.getJSONArray("data");
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile,null,SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("finance_county_revenue",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+
+                                values.put("county_revenue_id",i+1);
+                                values.put("revenue_estimates",estArray.getInt(i));
+                                values.put("conditional_grant",grantArray.getInt(i));
+                                values.put("county_id",countyHelper.getCountyId(countiesArray.getString(i)));
+                                values.put("equitable_share",shareArray.getInt(i));
+                                values.put("total_revenue",totalArray.getInt(i));
+                                values.put("year",yearArray.getString(i));
+
+                                success = db.insertOrThrow("finance_county_revenue",null,values);
+                            }
+
+                            db.close();
+                            d.dismiss();
+                            Log.d(TAG, "finance_county_revenue: " + success);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d(TAG, "Error: " + volleyError.toString());
                     }
                 }
         );

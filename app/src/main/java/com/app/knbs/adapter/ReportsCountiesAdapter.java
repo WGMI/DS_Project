@@ -157,7 +157,8 @@ public class ReportsCountiesAdapter extends RecyclerView.Adapter<ReportsCounties
 
         try {
             String table = reports.getTable();
-            if(table.contains("land_and_climate_surface_area_by_category")){
+            if(table.contains("land_and_climate_surface_area_by_category")
+                    || table.contains("tourism_population_proportion_that_took_trip")){
                 table = "land_and_climate_environment_impact_assessments_by_sector";
             }
             list = dbHelper.getYears(table);

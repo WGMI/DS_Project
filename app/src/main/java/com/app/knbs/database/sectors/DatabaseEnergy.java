@@ -140,7 +140,7 @@ public class DatabaseEnergy {
     public List<Sector_Data> getQuantity_and_Value_of_Imports_Exports_and_Reexports_of_Petroleum_Products(String choice) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
-        String query = "select year,sum(quantity_tonnes) as 'Quantity',sum(value_millions) as 'Value' from energy_value_and_quantity_of_imports_exports where type = '"+choice+"' group by year ";
+        String query = "select year,sum(quantity_tonnes) as 'Quantity' from energy_value_and_quantity_of_imports_exports where type = '"+choice+"' group by year ";
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
         Log.d(TAG, "rows "+num+"\n"+query);
@@ -149,7 +149,6 @@ public class DatabaseEnergy {
             Sector_Data data = new Sector_Data();
             data.setYear(cursor.getString(0));
             data.setSet_A(cursor.getString(1));
-            data.setSet_B(cursor.getString(2));
             list.add(data);
         }
         cursor.close();

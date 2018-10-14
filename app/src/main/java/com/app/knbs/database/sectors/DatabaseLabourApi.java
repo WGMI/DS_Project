@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.services.ReportLoader;
 import com.app.knbs.services.VolleySingleton;
 
 import org.json.JSONArray;
@@ -30,6 +31,7 @@ public class DatabaseLabourApi {
         this.context = context;
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
+    private ReportLoader loader = new ReportLoader(context);
 
     public void loadData(final ProgressDialog d){
         insertInto_labour_average_wage_earnings_per_employee_public_sector(d);
@@ -38,6 +40,7 @@ public class DatabaseLabourApi {
         insertInto_labour_wage_employment_by_industry_and_sex(d);
         insertInto_labour_wage_employment_by_industry_in_private_sector(d);
         insertInto_labour_wage_employment_by_industry_in_public_sector(d);
+        insertInto_labour_average_wage_earnings_per_employee_private_sector(d);
     }
 
     private JsonArrayRequest policy(JsonArrayRequest request) {
@@ -48,12 +51,11 @@ public class DatabaseLabourApi {
         return request;
     }
 
-    //Check table name
     private void insertInto_labour_average_wage_earnings_per_employee_private_sector(final ProgressDialog d){
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/energy/all_average_retail_prices_of_selected_petroleum_products",
+                loader.getApi("Average Wage Earnings Per Employee Private Sector"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -69,22 +71,21 @@ public class DatabaseLabourApi {
                             long success = 0;
 
                             SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-                            db.delete("labour_total_recorded_employment",null,null);
+                            db.delete("labour_average_wage_earnings_per_employee_private_sector",null,null);
 
                             for(int i=0;i<yearArray.length();i++){
                                 ContentValues values = new ContentValues();
 
-                                values.put("retail_price_id",i+1);
-                                /*values.put("petroleum_product",productArray.getString(i));
-                                values.put("retail_price_ksh",priceArray.getDouble(i));
-                                values.put("month",monthArray.getString(i));*/
+                                values.put("wage_earnings_id",i+1);
+                                values.put("private_sector",sectorArray.getString(i));
+                                values.put("wage_earnings",wageArray.getDouble(i));
                                 values.put("year",yearArray.getInt(i));
 
-                                success = db.insertOrThrow("labour_total_recorded_employment",null,values);
+                                success = db.insertOrThrow("labour_average_wage_earnings_per_employee_private_sector",null,values);
                             }
 
                             db.close();
-                            Log.d(TAG, "labour_total_recorded_employment: " + success);
+                            Log.d(TAG, "labour_average_wage_earnings_per_employee_private_sector: " + success);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -108,7 +109,7 @@ public class DatabaseLabourApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/labour/all_labour_average_wage_earnings_per_employee_public_sector",
+                loader.getApi("Average Wage Earnings Per Employee Public Sector"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -162,7 +163,7 @@ public class DatabaseLabourApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/labour/all_labour_memorandum_items_in_public_sector",
+                loader.getApi("Memorandum Items In Public Sector"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -216,7 +217,7 @@ public class DatabaseLabourApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/labour/all_labour_total_recorded_employment",
+                loader.getApi("Total Recorded Employment"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -270,7 +271,7 @@ public class DatabaseLabourApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/labour/all_labour_wage_employment_by_industry_and_sex",
+                loader.getApi("Wage Employment By Industry And Sex"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -327,7 +328,7 @@ public class DatabaseLabourApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/labour/all_labour_wage_employment_by_industry_and_sex",
+                loader.getApi("Average Wage Earnings Per Employee Private Sector"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -381,7 +382,7 @@ public class DatabaseLabourApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/labour/all_labour_wage_employment_by_industry_in_public_sector",
+                loader.getApi("Average Wage Earnings Per Employee Public Sector"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

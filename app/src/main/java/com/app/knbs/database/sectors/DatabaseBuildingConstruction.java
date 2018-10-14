@@ -169,4 +169,50 @@ public class DatabaseBuildingConstruction {
         db.close();
         return list;
     }
+
+    public List<String> getMaterials() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> materials = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(category) FROM building_and_construction_quarterly_civil_engineering_cost_index ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            materials.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return materials;
+    }
+
+    public List<Sector_Data> getQuarterly_Civil_Engineering_Cost_Index(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select " +
+                "year," +
+                "march,june," +
+                "sept,december " +
+                "from building_and_construction_quarterly_civil_engineering_cost_index " +
+                "where category = '"+choice+"' " +
+                "GROUP BY year ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            data.setSet_C(cursor.getString(3));
+            data.setSet_D(cursor.getString(4));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
 }
