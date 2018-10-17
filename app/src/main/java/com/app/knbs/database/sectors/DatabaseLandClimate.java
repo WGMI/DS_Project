@@ -102,11 +102,11 @@ public class DatabaseLandClimate {
         //choice = choice.substring(0, 1).toUpperCase() + choice.substring(1);
 
         String query = "SELECT year ,\n" +
-                "SUM(CASE WHEN industry='Forestry and Logging' THEN value_added ELSE 0 END) AS 'Forestry and Logging' ,\n" +
-                "SUM(CASE WHEN industry='Fishing and Aquaculture' THEN value_added ELSE 0 END) AS 'Fishing and Aquaculture', \n" +
-                "SUM(CASE WHEN industry='Mining and quarrying' THEN value_added ELSE 0 END) AS 'Mining and quarrying' ,\n" +
-                "SUM(CASE WHEN industry='Water Supply ' THEN value_added ELSE 0 END) AS 'Water Supply', \n" +
-                "SUM(CASE WHEN industry='GDP at Current Prices' THEN value_added ELSE 0 END) AS 'GDP at Current Prices' \n" +
+                "SUM(ForestryandLogging) AS 'Forestry and Logging' ,\n" +
+                "SUM(FishingandAquaculture) AS 'Fishing and Aquaculture', \n" +
+                "SUM(Miningandquarrying) AS 'Mining and quarrying' ,\n" +
+                "SUM(WaterSupply) AS 'Water Supply', \n" +
+                "SUM(GDPatCurrentPrices) AS 'GDP at Current Prices' \n" +
                 "FROM land_and_climate_trends_in_environment_and_natural_resources GROUP BY year ";
         Cursor cursor = db.rawQuery(query, null);
 
@@ -259,7 +259,7 @@ public class DatabaseLandClimate {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         List<String> categories = new ArrayList<>();
         int num;
-        String query = "SELECT DISTINCT(private_sector) FROM land_and_climate_surface_area_by_category ";
+        String query = "SELECT DISTINCT(category) FROM land_and_climate_surface_area_by_category ";
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
         Log.d(TAG, "rows "+num+"\n"+query);
@@ -275,12 +275,12 @@ public class DatabaseLandClimate {
     public List<Sector_Data> getSurface_Area_By_Category(String county, String selection) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
 
-        String query = "SELECT area_sq_km, " +
+        String query = "SELECT area_sq_km " +
                 "FROM land_and_climate_surface_area_by_category e " +
                 "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"' AND category='"+selection+"'";
         Cursor cursor = db.rawQuery(query, null);
 
-        Log.d(TAG, "Query"+query);
+        Log.d(TAG, "Query "+query);
         List<Sector_Data> list = new ArrayList<>();
         while(cursor.moveToNext()) {
             Sector_Data data = new Sector_Data();
@@ -298,10 +298,10 @@ public class DatabaseLandClimate {
 
         String query = "SELECT year,temp_celsius_degrees " +
                 "FROM land_and_climate_temperature e " +
-                "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"'";
+                "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"' group by year";
         Cursor cursor = db.rawQuery(query, null);
 
-        Log.d(TAG, "Query"+query);
+        Log.d(TAG, "Query "+query);
         List<Sector_Data> list = new ArrayList<>();
         while(cursor.moveToNext()) {
             Sector_Data data = new Sector_Data();
@@ -332,6 +332,135 @@ public class DatabaseLandClimate {
             data.setYear(cursor.getString(0));
             data.setSet_A(cursor.getString(1));
             data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getFishCategories() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> categories = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(category) FROM environment_and_natural_resources_quantity_value_fish_landed ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            categories.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return categories;
+    }
+
+    public List<Sector_Data> getQuantity_and_Value_of_Fish_Landed(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT year ,value FROM environment_and_natural_resources_quantity_value_fish_landed WHERE category='"+choice+"' GROUP BY year ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getMineralDescriptions() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> categories = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(description) FROM environment_and_natural_resources_quantity_of_total_mineral ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            categories.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return categories;
+    }
+
+    public List<Sector_Data> getQuantity_of_Total_Minerals(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT year ,amount FROM environment_and_natural_resources_quantity_of_total_mineral WHERE description='"+choice+"' GROUP BY year ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getRecord_Sale_of_Government_Products() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "SELECT year,soft_wood,fuelwood_charcoal,power_and_telegraph FROM environment_and_natural_resources_record_sale_goverment_products GROUP BY year";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            data.setSet_C(cursor.getString(3));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getMineralDescriptions_Value() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> categories = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(description) FROM environment_and_natural_resources_value_of_total_mineral ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            categories.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return categories;
+    }
+
+    public List<Sector_Data> getValue_of_Total_Minerals(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT year ,amount FROM environment_and_natural_resources_value_of_total_mineral WHERE description='"+choice+"' GROUP BY year ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
             list.add(data);
         }
         cursor.close();

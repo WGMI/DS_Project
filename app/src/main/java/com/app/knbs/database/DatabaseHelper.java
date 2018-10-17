@@ -171,7 +171,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
 
         Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
-            category.add("Select County");
+        category.add("Select County");
         while(cursor.moveToNext()) {
             category.add(cursor.getString(0));
         }
@@ -239,7 +239,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<String> getSectors() {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         List<String> sectors = new ArrayList<>();
         int num;
         String query = "SELECT DISTINCT(sector_name) FROM sectors WHERE (sector_name!='Agriculture' AND sector_name!='Education' AND sector_name!='Governance'" +
@@ -247,7 +247,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
         Log.d(TAG, "rows "+num+"\n"+query);
-            sectors.add("Select Sector");
+        sectors.add("Select Sector");
         while(cursor.moveToNext()) {
             sectors.add(cursor.getString(0));
         }

@@ -102,10 +102,10 @@ public class DatabasePopulation {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         choice = choice.toLowerCase();
         String query = "SELECT year,\n" +
-                "(SUM(under_1)+SUM(range_1_2)+SUM(range_6_13)) AS range_0_13,\n" +
-                "(SUM(range_14_17)+SUM(range_18_34)) AS range_14_34,\n" +
-                "(SUM(range_15_64)) AS range_15_64,\n" +
-                "(SUM(range_65_plus)) AS range_65_plus\n" +
+                "SUM(under_1) as Under_1,\n" +
+                "SUM(range_less_18) AS range_below_18,\n" +
+                "SUM(range_18_plus) AS range_18_plus,\n" +
+                "SUM(range_65_plus) AS range_65_plus \n" +
                 "FROM population_and_vs_populationprojectionsbyspecialagegroups e\n" +
                 "JOIN counties c ON e.county_id=c.county_id\n" +
                 "WHERE county_name='"+county+"' AND gender='"+choice+"' GROUP BY year,county_name";
@@ -329,6 +329,195 @@ public class DatabasePopulation {
             Sector_Data data = new Sector_Data();
             data.setYear(choice);
             data.setSet_A(cursor.getString(0));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getAgeGroups() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> category = new ArrayList<>();
+        int num;
+        String query = "select distinct(age_group) from population_by_sex_and_age_groups";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            category.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return category;
+    }
+
+    public List<Sector_Data> getPopulation_by_Sex_and_Age_Groups(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        String query = "SELECT male,female FROM population_by_sex_and_age_groups WHERE age_group='"+choice+"'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPopulation_by_broad_age_group(String county) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT age_depend_ratio,child_depend_ratio,old_age_depend_ratio FROM population_kihibs_by_broad_age_group e" +
+                "       JOIN counties c ON e.county_id=c.county_id " +
+                "       WHERE county_name='" + county + "' ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows " + cursor.getCount() + "\n" + query);
+        List<Sector_Data> list = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            data.setSet_C(cursor.getString(2));
+
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getOrphanCategories() {
+        List<String> categories = new ArrayList<>();
+        categories.add("living_with_both");
+        categories.add("father_alive");
+        categories.add("father_deceased");
+        categories.add("mother_alive");
+        categories.add("mother_deceased");
+        categories.add("both_alive");
+        categories.add("only_father_alive");
+        categories.add("only_mother_alive");
+        categories.add("both_parents_deceased");
+        categories.add("missing_info");
+        categories.add("orphanhood");
+        return categories;
+    }
+
+    public List<Sector_Data> getPopulation_of_Children_under_18_by_orphanhood(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        String query = "SELECT "+choice+" FROM population_kihibs_children_under_18_by_orphanhood";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPopulation_Distribution_by_sex() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "SELECT male_per_cent,female_per_cent FROM population_kihibs_distribution_by_sex";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPopulation_Distribution_of_households_by_size(String county) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT range_1_2_persons + range_3_4_persons,range_5_6_persons + over_7_persons FROM population_kihibs_distribution_of_households_by_size e" +
+                "       JOIN counties c ON e.county_id=c.county_id " +
+                "       WHERE county_name='" + county + "' ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows " + cursor.getCount() + "\n" + query);
+        List<Sector_Data> list = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getMaritalCategories() {
+        List<String> categories = new ArrayList<>();
+        categories.add("monogamous");
+        categories.add("polygamous");
+        categories.add("living_together");
+        categories.add("seperated");
+        categories.add("divorced");
+        categories.add("widow_widower");
+        return categories;
+    }
+
+    public List<Sector_Data> getPopulation_Marital_Status_above_18_years(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        String query = "SELECT "+choice+" FROM population_kihibs_marital_status_above_18_years";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPopulation_by_sex_according_to_household_head(String county) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT male,female FROM population_kihibs_hholds_by_sex_of_household_head e" +
+                "       JOIN counties c ON e.county_id=c.county_id " +
+                "       WHERE county_name='" + county + "' ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows " + cursor.getCount() + "\n" + query);
+        List<Sector_Data> list = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+
             list.add(data);
         }
         cursor.close();

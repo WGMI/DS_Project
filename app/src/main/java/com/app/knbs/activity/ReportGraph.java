@@ -281,7 +281,13 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Quarterly Civil Engineering Cost Index")
                 ||report.matches("Average Wage Earnings Per Employee in Private Sector")
                 ||report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")
-                ||report.contains("Surface Area By Category")
+                ||report.contains("Surface Area by Category")
+                ||report.contains("Quantity and Value of Fish Landed")
+                ||report.contains("Quantity of Total Minerals")
+                ||report.contains("Value of Total Minerals")
+                ||report.contains("Population by Sex and Age Groups")
+                ||report.contains("Population of Children under 18 by orphanhood")
+                ||report.contains("Population Marital Status above 18 years")
                 ) {
             List<String> list = null;
             selectionLabel.setVisibility(View.VISIBLE);
@@ -514,9 +520,28 @@ public class ReportGraph extends AppCompatActivity {
             }else if (report.matches("Average Wage Earnings Per Employee in Private Sector")){
                 selectionLabel.setText("Category");
                 list = databaseLabour.getPrivate_Sector_Categories();
-            }else if (report.contains("Surface Area By Category")){
+            }else if (report.contains("Surface Area by Category")){
                 selectionLabel.setText("Category");
+                Log.d("DatabaseHelper_list", "onCreate: list works");
                 list = databaseLandClimate.getSurface_Categories();
+            }else if (report.contains("Quantity and Value of Fish Landed")){
+                selectionLabel.setText("Category");
+                list = databaseLandClimate.getFishCategories();
+            }else if (report.contains("Quantity of Total Minerals")){
+                selectionLabel.setText("Description");
+                list = databaseLandClimate.getMineralDescriptions();
+            }else if (report.contains("Value of Total Minerals")){
+                selectionLabel.setText("Description");
+                list = databaseLandClimate.getMineralDescriptions_Value();
+            }else if (report.contains("Population by Sex and Age Groups")){
+                selectionLabel.setText("Age Group");
+                list = databasePopulation.getAgeGroups();
+            }else if (report.contains("Population of Children under 18 by orphanhood")){
+                selectionLabel.setText("Category");
+                list = databasePopulation.getOrphanCategories();
+            }else if (report.contains("Population Marital Status above 18 years")){
+                selectionLabel.setText("Category");
+                list = databasePopulation.getMaritalCategories();
             }
 
             select.setVisibility(View.VISIBLE);
@@ -908,7 +933,6 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Generation and Imports of Electricity")
                 ||report.contains("Development Expenditure Water")
                 ||report.contains("Average Export Prices Ash")
-                ||report.contains("Government Forest")
                 ||report.contains("Water Purification Points")
                 ||report.contains("Number of Financial Institutions")
                 ||report.matches("KCSE Examination Results")
@@ -920,8 +944,13 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Proportion of Population That Took A Trip")
                 ||report.contains("Quantity and Value of Imports, Exports and Re-exports of Petroleum Products")
                 ||report.contains("Rainfall")
-                ||report.contains("Surface Area By Category")
+                ||report.contains("Surface Area by Category")
                 ||report.contains("Temperature")
+                ||report.contains("Quantity and Value of Fish Landed")
+                ||report.contains("Quantity of Total Minerals")
+                ||report.contains("Value of Total Minerals")
+                ||report.contains("Population of Children under 18 by orphanhood")
+                ||report.contains("Population Marital Status above 18 years")
                 ) {
             if(report.matches("Crimes Reported to Police by Command Stations")){
                 label_1 = "Crimes";
@@ -1195,10 +1224,6 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = selection;
                 yLabel.setText("Price");
                 list = databaseLandClimate.getAverage_Export_Prices_Ash();
-            }else if (report.contains("Government Forest")) {
-                label_1 = selection;
-                yLabel.setText("Acres (Thousands)");
-                list = databaseLandClimate.getGovernment_Forest();
             }else if (report.contains("Water Purification Points")) {
                 label_1 = selection;
                 yLabel.setText("Value");
@@ -1243,7 +1268,7 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = "Quantity";
                 yLabel.setText("Quantity");
                 list = databaseLandClimate.getRainfall(county);
-            }else if (report.contains("Surface Area By Category")) {
+            }else if (report.contains("Surface Area by Category")) {
                 label_1 = "Area";
                 yLabel.setText("Area (SQ KM)");
                 list = databaseLandClimate.getSurface_Area_By_Category(county,selection);
@@ -1251,6 +1276,26 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = "Temperature";
                 yLabel.setText("Degrees Celcius");
                 list = databaseLandClimate.getTemperature(county);
+            }else if (report.contains("Quantity and Value of Fish Landed")) {
+                label_1 = "Value";
+                yLabel.setText("Value");
+                list = databaseLandClimate.getQuantity_and_Value_of_Fish_Landed(selection);
+            }else if (report.contains("Quantity of Total Minerals")) {
+                label_1 = "Quantity";
+                yLabel.setText("Quantity");
+                list = databaseLandClimate.getQuantity_of_Total_Minerals(selection);
+            }else if (report.contains("Value of Total Minerals")) {
+                label_1 = "Value";
+                yLabel.setText("Value");
+                list = databaseLandClimate.getValue_of_Total_Minerals(selection);
+            }else if (report.contains("Population of Children under 18 by orphanhood")){
+                label_1 = "Percentage";
+                yLabel.setText("Percentage");
+                list = databasePopulation.getPopulation_of_Children_under_18_by_orphanhood(selection);
+            }else if (report.contains("Population Marital Status above 18 years")){
+                label_1 = "Percentage";
+                yLabel.setText("Percentage");
+                list = databasePopulation.getPopulation_Marital_Status_above_18_years(selection);
             }
 
             if (list != null) {
@@ -1335,6 +1380,10 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Public Secondary School Teachers by Sex")
                 ||report.contains("Secondary School Enrolment by Year and Sex")
                 ||report.contains("Land Topography")
+                ||report.contains("Population by Sex and Age Groups")
+                ||report.contains("Population Distribution by sex")
+                ||report.contains("Population Distribution of households by size")
+                ||report.contains("Population by sex according to  household head")
                 ){
 
             if(report.matches("Births and Deaths by Sex")){
@@ -1639,6 +1688,26 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Lowest Point";
                 yLabel.setText("Meters");
                 list = databaseLandClimate.getLand_Topography(county);
+            }else if (report.contains("Population by Sex and Age Groups")){
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Population");
+                list = databasePopulation.getPopulation_by_Sex_and_Age_Groups(selection);
+            }else if (report.contains("Population Distribution by sex")){
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Percent");
+                list = databasePopulation.getPopulation_Distribution_by_sex();
+            }else if (report.contains("Population Distribution of households by size")){
+                label_1 = "From 1 to 4";
+                label_2 = "From 5 to Over 7";
+                yLabel.setText("Percent");
+                list = databasePopulation.getPopulation_Distribution_of_households_by_size(county);
+            }else if (report.contains("Population by sex according to  household head")){
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Percent");
+                list = databasePopulation.getPopulation_by_sex_according_to_household_head(county);
             }
 
             if (list != null) {
@@ -1699,8 +1768,10 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Administrative Units")
                 ||report.matches("Maternal Care")
                 ||report.matches("Nutritional Status of Children")
-                ||report.contains("Land and Climate Surface Area by Category")
                 ||report.contains("Women Groups Registration Contributions Women Groups")
+                ||report.contains("Government Forest")
+                ||report.contains("Population by broad age group")
+                ||report.contains("Record Sale of Government Products")
                 ) {
 
             if(report.matches("Chemical Med Feed Input ")){
@@ -1872,7 +1943,13 @@ public class ReportGraph extends AppCompatActivity {
                 label_3 = "Total Expenditure";
                 yLabel.setText("Schools");
                 list = databaseFinance.getCounty_expenditure(county);
-            }else if(report.contains("Land and Climate Surface Area by Category")){
+            }else if(report.contains("Government Forest")){
+                label_1 = "Previous Plantation Area";
+                label_2 = "Area Planted";
+                label_3 = "Area Cleared";
+                yLabel.setText("Acres");
+                list = databaseLandClimate.getGovernment_Forest();
+            }/*else if(report.contains("Land and Climate Surface Area by Category")){
                 Log.d("l_and_c", "onProgressChanged: ");
                 label_1 = "Employee Compensation";
                 label_2 = "Goods and Services";
@@ -1880,7 +1957,7 @@ public class ReportGraph extends AppCompatActivity {
                 //label_4
                 yLabel.setText("Schools");
                 list = databaseLandClimate.getLand_and_Climate_Surface_Area_by_Category(county);
-            }else if(report.contains("Women Groups Registration Contributions Women Groups")){
+            }*/else if(report.contains("Women Groups Registration Contributions Women Groups")){
                 Log.d("l_and_c", "onProgressChanged: ");
                 label_1 = "Number of Groups";
                 label_2 = "Membership";
@@ -1945,6 +2022,18 @@ public class ReportGraph extends AppCompatActivity {
                 label_3 = "Under Weight";
                 yLabel.setText("percentage");
                 list = databaseHealth.getNutritional_status_of_children(county);
+            }else if(report.contains("Population by broad age group")){
+                label_1 = "Independent Ratio";
+                label_2 = "Dependent Ratio (Children)";
+                label_3 = "Dependent Ratio (Elderly)";
+                yLabel.setText("Ratio");
+                list = databasePopulation.getPopulation_by_broad_age_group(county);
+            }else if (report.contains("Record Sale of Government Products")){
+                label_1 = "Soft Wood";
+                label_2 = "Fuelwood Charcoal";
+                label_3 = "Power and Telegraph";
+                yLabel.setText("Value");
+                list = databaseLandClimate.getRecord_Sale_of_Government_Products();
             }
 
 
@@ -1996,9 +2085,9 @@ public class ReportGraph extends AppCompatActivity {
                 yLabel.setText("Population");
                 list = databasePopulation.getPopulationprojectionsbyselectedagegroup(county);
             }else if (report.matches("Population Projections by Special Age Group")){
-                label_1 = "Range 0-13";
-                label_2 = "Range 14-34";
-                label_3 = "Range 15-64";
+                label_1 = "Under 1";
+                label_2 = "Range below 18";
+                label_3 = "Range 18 plus";
                 label_4 = "Range 65 plus";
                 yLabel.setText("Population");
                 list = databasePopulation.getPopulationprojectionsbyspecialagegroups(county,choice);
@@ -2113,13 +2202,13 @@ public class ReportGraph extends AppCompatActivity {
             }
         }
 
-        if(report.matches("Trends in Environment and Natural Resources")
+        if(report.matches("Environmental Natural Resources Trends")
                 ||report.matches("Elementary Aggregates Weights in the CPI Baskets")
                 ||report.matches("Group Weights for Kenya CPI February Base Period 2009")
                 ||report.matches("Group Weights for Kenya CPI October Base Period 1997")
                 ){
 
-            if(report.matches("Trends in Environment and Natural Resources")){
+            if(report.matches("Environmental Natural Resources Trends")){
                 label_1 = "Forestry and Logging";
                 label_2 = "Fishing and Aquaculture";
                 label_3 = "Mining and quarrying";
