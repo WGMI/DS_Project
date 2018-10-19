@@ -279,31 +279,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
     }
 
-
-
-    public List<Sector_Data> getAdministrative_unit(String county) {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-
-        String query = "SELECT SUM(divisions),SUM(locations),SUM(sub_locations) FROM administrative_unit e" +
-                "       JOIN counties c ON e.county_id=c.county_id " +
-                "       WHERE county_name='"+county+"' GROUP BY county_name";
-        Cursor cursor = db.rawQuery(query, null);
-
-        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
-        List<Sector_Data> list = new ArrayList<>();
-        while(cursor.moveToNext()) {
-            Sector_Data data = new Sector_Data();
-            data.setYear("2014");
-            data.setSet_A(cursor.getString(0));
-            data.setSet_B(cursor.getString(1));
-            data.setSet_C(cursor.getString(2));
-            list.add(data);
-        }
-        cursor.close();
-        db.close();
-        return list;
-    }
-
     private int getVersionId() {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         String query = "SELECT version_id FROM dbVersion";

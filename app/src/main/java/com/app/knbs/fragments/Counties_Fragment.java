@@ -1,5 +1,6 @@
 package com.app.knbs.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,13 +22,18 @@ import android.widget.LinearLayout;
 
 import com.app.knbs.R;
 import com.app.knbs.adapter.ReportsCountiesAdapter;
+import com.app.knbs.adapter.ReportsNationalAdapter;
 import com.app.knbs.adapter.model.Sector;
 import com.app.knbs.adapter.model.Report;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.database.sectors.DatabaseMoneyAndBankingApi;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.app.knbs.database.DatabaseHelper.TAG;
+
+/**
 /**
  * Developed by Rodney on 04/09/2017.
  */
@@ -38,6 +45,10 @@ public class Counties_Fragment extends Fragment  {
     private ReportsCountiesAdapter adapter;
     private List<Report> reportList;
     private String sector,source,api;
+
+    private ProgressDialog dataFetchingDialog;
+
+    private DatabaseMoneyAndBankingApi databaseMoneyAndBankingApi;
 
     public Counties_Fragment() {
         // Required empty public constructor
@@ -64,7 +75,23 @@ public class Counties_Fragment extends Fragment  {
 
         dbHelper = new DatabaseHelper(getContext());
 
+        dataFetchingDialog = new ProgressDialog(getContext());
+        dataFetchingDialog.setTitle("Fetching Data");
+        dataFetchingDialog.setMessage("Please wait...");
+        dataFetchingDialog.setCanceledOnTouchOutside(false);
+
+        dbHelper = new DatabaseHelper(getContext());
+
         adapter = new ReportsCountiesAdapter(getContext(), reportList);
+
+        switch (sector){
+            case "Money And Banking" :
+                databaseMoneyAndBankingApi = new DatabaseMoneyAndBankingApi(getContext());
+                databaseMoneyAndBankingApi.loadData(dataFetchingDialog);
+                break;
+            default:
+                Log.d(TAG, "onCreateView: No sector loaded");
+        }
 
         assert recyclerView != null;
         recyclerView.setHasFixedSize(true);

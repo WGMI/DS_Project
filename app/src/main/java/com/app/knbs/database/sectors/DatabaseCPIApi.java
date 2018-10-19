@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.services.ReportLoader;
 import com.app.knbs.services.VolleySingleton;
 
 import org.json.JSONArray;
@@ -30,8 +31,10 @@ public class DatabaseCPIApi {
         this.context = context;
     }
     private DatabaseHelper dbHelper = new DatabaseHelper(context);
+    private ReportLoader loader = new ReportLoader(context);
 
     public void loadData(final ProgressDialog d){
+        insertInto_cpi_annual_avg_retail_prices_of_certain_consumer_goods_in_kenya(d);
         insertInto_cpi_consumer_price_index(d);
         insertInto_cpi_elementary_aggregates_weights_in_the_cpi_baskets(d);
         insertInto_cpi_group_weights_for_kenya_cpi_febuary_base_2009(d);
@@ -46,18 +49,44 @@ public class DatabaseCPIApi {
         return request;
     }
 
-    //API Not working
     private void insertInto_cpi_annual_avg_retail_prices_of_certain_consumer_goods_in_kenya(final ProgressDialog d){
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/labour/all_labour_wage_employment_by_industry_in_public_sector",
+                loader.getApi("Annual Average Retail Prices of Certain Consumer Goods in Kenya"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
                             JSONObject yearObject  = response.getJSONObject(0);
+                            JSONObject itemObject  = response.getJSONObject(1);
+                            JSONObject unitObject  = response.getJSONObject(2);
+                            JSONObject kesObject  = response.getJSONObject(3);
 
+                            JSONArray yearArray = yearObject.getJSONArray("data");
+                            JSONArray itemArray = itemObject.getJSONArray("data");
+                            JSONArray unitArray = unitObject.getJSONArray("data");
+                            JSONArray kesArray = kesObject.getJSONArray("data");
+
+                            long success = 0;
+
+                            SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+                            db.delete("cpi_annual_avg_retail_prices_of_certain_consumer_goods_in_kenya",null,null);
+
+                            for(int i=0;i<yearArray.length();i++){
+                                ContentValues values = new ContentValues();
+
+                                values.put("avg_retail_price_id",i+1);
+                                values.put("item",itemArray.getString(i));
+                                values.put("unit",unitArray.getString(i));
+                                values.put("ksh_per_unit",Float.parseFloat(String.valueOf(kesArray.get(i))));
+                                values.put("year",yearArray.getInt(i));
+
+                                success = db.insertOrThrow("cpi_annual_avg_retail_prices_of_certain_consumer_goods_in_kenya",null,values);
+                            }
+
+                            db.close();
+                            Log.d(TAG, "cpi_annual_avg_retail_prices_of_certain_consumer_goods_in_kenya: " + success);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -81,7 +110,7 @@ public class DatabaseCPIApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/cpi/all_consumer_price_index",
+                loader.getApi("Consumer Price Index"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -174,7 +203,7 @@ public class DatabaseCPIApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/cpi/all_elementary_aggregates_weights_in_the_cpi_baskets",
+                loader.getApi("Elementary Aggregates Weights in the CPI Baskets"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -240,7 +269,7 @@ public class DatabaseCPIApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/cpi/all_group_weights_for_kenya_cpi_febuary_base_2009",
+                loader.getApi("Group Weights for Kenya CPI February Base Period 2009"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -294,7 +323,7 @@ public class DatabaseCPIApi {
         d.show();
         RequestQueue queue = VolleySingleton.getInstance(context).getQueue();
         JsonArrayRequest request = new JsonArrayRequest(
-                "http://156.0.232.97:8000/cpi/all_group_weights_for_kenya_cpi_october_base_1997",
+                loader.getApi("Group Weights for Kenya CPI October Base Period 1997"),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

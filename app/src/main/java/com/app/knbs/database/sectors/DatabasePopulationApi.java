@@ -774,7 +774,7 @@ public class DatabasePopulationApi {
                                 values.put("mother_deceased",mdArray.getDouble(i));
                                 values.put("both_alive",baArray.getDouble(i));
                                 values.put("only_father_alive",ofaArray.getDouble(i));
-                                values.put("only_father_alive",omaArray.getDouble(i));
+                                values.put("only_mother_alive",omaArray.getDouble(i));
                                 values.put("both_parents_deceased",bdArray.getDouble(i));
                                 values.put("missing_info",miArray.getDouble(i));
                                 values.put("orphanhood",orArray.getDouble(i));

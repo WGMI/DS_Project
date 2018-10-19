@@ -100,15 +100,14 @@ public class DatabasePopulation {
 
     public List<Sector_Data> getPopulationprojectionsbyspecialagegroups(String county, String choice) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        choice = choice.toLowerCase();
+        //choice = choice.toLowerCase();
         String query = "SELECT year,\n" +
-                "SUM(under_1) as Under_1,\n" +
                 "SUM(range_less_18) AS range_below_18,\n" +
                 "SUM(range_18_plus) AS range_18_plus,\n" +
                 "SUM(range_65_plus) AS range_65_plus \n" +
                 "FROM population_and_vs_populationprojectionsbyspecialagegroups e\n" +
                 "JOIN counties c ON e.county_id=c.county_id\n" +
-                "WHERE county_name='"+county+"' AND gender='"+choice+"' GROUP BY year,county_name";
+                "WHERE county_name='"+county+"' AND gender LIKE '"+choice+"' GROUP BY year";
         Cursor cursor = db.rawQuery(query, null);
 
         Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
@@ -119,7 +118,6 @@ public class DatabasePopulation {
             data.setSet_A(cursor.getString(1));
             data.setSet_B(cursor.getString(2));
             data.setSet_C(cursor.getString(3));
-            data.setSet_D(cursor.getString(4));
             list.add(data);
         }
         cursor.close();
@@ -412,9 +410,12 @@ public class DatabasePopulation {
         return categories;
     }
 
-    public List<Sector_Data> getPopulation_of_Children_under_18_by_orphanhood(String choice) {
+    public List<Sector_Data> getPopulation_of_Children_under_18_by_orphanhood(String county,String choice) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        String query = "SELECT "+choice+" FROM population_kihibs_children_under_18_by_orphanhood";
+        String query =
+                "SELECT "+choice+" FROM " +
+                        "population_kihibs_children_under_18_by_orphanhood e " +
+                        "JOIN counties c ON e.county_id=c.county_id WHERE county_name='" + county + "' ";
         Cursor cursor = db.rawQuery(query, null);
 
         Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
@@ -430,10 +431,11 @@ public class DatabasePopulation {
         return list;
     }
 
-    public List<Sector_Data> getPopulation_Distribution_by_sex() {
+    public List<Sector_Data> getPopulation_Distribution_by_sex(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
-        String query = "SELECT male_per_cent,female_per_cent FROM population_kihibs_distribution_by_sex";
+        String query = "SELECT male_per_cent,female_per_cent FROM population_kihibs_distribution_by_sex e " +
+                "JOIN counties c ON e.county_id=c.county_id WHERE county_name='" + county + "' ";;;
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
         Log.d(TAG, "rows "+num+"\n"+query);
@@ -484,9 +486,10 @@ public class DatabasePopulation {
         return categories;
     }
 
-    public List<Sector_Data> getPopulation_Marital_Status_above_18_years(String choice) {
+    public List<Sector_Data> getPopulation_Marital_Status_above_18_years(String county,String choice) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        String query = "SELECT "+choice+" FROM population_kihibs_marital_status_above_18_years";
+        String query = "SELECT "+choice+" FROM population_kihibs_marital_status_above_18_years " +
+                "JOIN counties c ON e.county_id=c.county_id WHERE county_name='" + county + "' ";;
         Cursor cursor = db.rawQuery(query, null);
 
         Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);

@@ -37,6 +37,7 @@ import com.app.knbs.database.sectors.DatabaseLabour;
 import com.app.knbs.database.sectors.DatabaseLandClimate;
 import com.app.knbs.database.sectors.DatabaseManufacturing;
 import com.app.knbs.database.sectors.DatabaseMoneyAndBanking;
+import com.app.knbs.database.sectors.DatabasePolitical;
 import com.app.knbs.database.sectors.DatabasePopulation;
 import com.app.knbs.database.sectors.DatabaseTourism;
 import com.app.knbs.database.sectors.DatabaseTradeCommerce;
@@ -96,6 +97,7 @@ public class ReportGraph extends AppCompatActivity {
     private DatabaseEnergy databaseEnergy;
     private DatabaseTourism databaseTourism;
     private DatabaseMoneyAndBanking databaseMoneyAndBanking;
+    private DatabasePolitical databasePolitical;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -119,6 +121,7 @@ public class ReportGraph extends AppCompatActivity {
         databaseEnergy =  new DatabaseEnergy(this);
         databaseTourism =  new DatabaseTourism(this);
         databaseMoneyAndBanking =  new DatabaseMoneyAndBanking(this);
+        databasePolitical = new DatabasePolitical(this);
 
         Intent intent = getIntent();
         String sector = intent.getStringExtra("sector");
@@ -288,6 +291,12 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Population by Sex and Age Groups")
                 ||report.contains("Population of Children under 18 by orphanhood")
                 ||report.contains("Population Marital Status above 18 years")
+                ||report.contains("Experience of Domestic Violence By Age")
+                ||report.contains("Experience of Domestic Violence by Marital Success")
+                ||report.contains("Experience of Domestic Violence by Residence")
+                ||report.contains("Knowledge and Prevalence of Female Circumcision")
+                ||report.contains("Members of National Assembly and Senators")
+                ||report.contains("Prevalence Female Circumcision and Type")
                 ) {
             List<String> list = null;
             selectionLabel.setVisibility(View.VISIBLE);
@@ -542,6 +551,24 @@ public class ReportGraph extends AppCompatActivity {
             }else if (report.contains("Population Marital Status above 18 years")){
                 selectionLabel.setText("Category");
                 list = databasePopulation.getMaritalCategories();
+            }else if (report.contains("Experience of Domestic Violence By Age")){
+                selectionLabel.setText("Age Group");
+                list = databaseGovernance.getDomesticViolenceAgeGroups();
+            }else if (report.contains("Experience of Domestic Violence by Marital Success")){
+                selectionLabel.setText("Status");
+                list = databaseGovernance.getDomesticViolenceMaritalStatus();
+            }else if (report.contains("Experience of Domestic Violence by Residence")){
+                selectionLabel.setText("Residence");
+                list = databaseGovernance.getDomesticViolenceResidences();
+            }else if (report.contains("Knowledge and Prevalence of Female Circumcision")){
+                selectionLabel.setText("Age Group");
+                list = databaseGovernance.getCircumcisionKnowledgeAgeGroups();
+            }else if (report.contains("Members of National Assembly and Senators")){
+                selectionLabel.setText("Category");
+                list = databaseGovernance.getMNACategories();
+            }else if (report.contains("Prevalence Female Circumcision and Type")){
+                selectionLabel.setText("Age Group");
+                list = databaseGovernance.getFemaleCircumcisionAgeGroups();
             }
 
             select.setVisibility(View.VISIBLE);
@@ -1291,11 +1318,11 @@ public class ReportGraph extends AppCompatActivity {
             }else if (report.contains("Population of Children under 18 by orphanhood")){
                 label_1 = "Percentage";
                 yLabel.setText("Percentage");
-                list = databasePopulation.getPopulation_of_Children_under_18_by_orphanhood(selection);
+                list = databasePopulation.getPopulation_of_Children_under_18_by_orphanhood(county,selection);
             }else if (report.contains("Population Marital Status above 18 years")){
                 label_1 = "Percentage";
                 yLabel.setText("Percentage");
-                list = databasePopulation.getPopulation_Marital_Status_above_18_years(selection);
+                list = databasePopulation.getPopulation_Marital_Status_above_18_years(county,selection);
             }
 
             if (list != null) {
@@ -1384,6 +1411,11 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Population Distribution by sex")
                 ||report.contains("Population Distribution of households by size")
                 ||report.contains("Population by sex according to  household head")
+                ||report.contains("Knowledge and Prevalence of Female Circumcision")
+                ||report.contains("Members of National Assembly and Senators")
+                ||report.contains("Persons Reported to have Committed Defilement")
+                ||report.contains("Persons Reported to have Committed Rape")
+                ||report.contains("Total Prisoners Committed For Debt by Sex")
                 ){
 
             if(report.matches("Births and Deaths by Sex")){
@@ -1697,7 +1729,7 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = "Male";
                 label_2 = "Female";
                 yLabel.setText("Percent");
-                list = databasePopulation.getPopulation_Distribution_by_sex();
+                list = databasePopulation.getPopulation_Distribution_by_sex(county);
             }else if (report.contains("Population Distribution of households by size")){
                 label_1 = "From 1 to 4";
                 label_2 = "From 5 to Over 7";
@@ -1708,6 +1740,31 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Female";
                 yLabel.setText("Percent");
                 list = databasePopulation.getPopulation_by_sex_according_to_household_head(county);
+            }else if (report.contains("Knowledge and Prevalence of Female Circumcision")){
+                label_1 = "Heard Of";
+                label_2 = "Not Heard Of";
+                yLabel.setText("Percent");
+                list = databaseGovernance.getKnowledge_and_Prevalence_of_Female_Circumcision(selection);
+            }else if (report.contains("Members of National Assembly and Senators")){
+                label_1 = "Men";
+                label_2 = "Women";
+                yLabel.setText("Number");
+                list = databaseGovernance.getMembers_of_National_Assembly_and_Senators(selection);
+            }else if (report.contains("Persons Reported to have Committed Defilement")){
+                label_1 = "Men";
+                label_2 = "Women";
+                yLabel.setText("Number");
+                list = databaseGovernance.getPersons_Reported_to_have_Committed_Defilement();
+            }else if (report.contains("Persons Reported to have Committed Rape")){
+                label_1 = "Men";
+                label_2 = "Women";
+                yLabel.setText("Number");
+                list = databaseGovernance.getPersons_Reported_to_have_Committed_Rape();
+            }else if (report.contains("Total Prisoners Committed For Debt by Sex")){
+                label_1 = "Men";
+                label_2 = "Women";
+                yLabel.setText("Number");
+                list = databaseGovernance.getTotal_Prisoners_Committed_For_Debt_by_Sex();
             }
 
             if (list != null) {
@@ -1747,7 +1804,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("National Government Expenditure By Purpose")
                 ||report.matches("Outstanding Debt International Organization")
                 ||report.matches("Outstanding Debt Lending Country")
-                ||report.matches("Population by Sex, Households, Density and Census Years")
+                ||report.matches("Population by Sex, Households, Density and Census years")
                 ||report.matches("NHIF Members")
                 ||report.matches("Hotel Occupancy By Residence")
                 ||report.matches("Hotel Occupancy By Zone")
@@ -1772,6 +1829,11 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Government Forest")
                 ||report.contains("Population by broad age group")
                 ||report.contains("Record Sale of Government Products")
+                ||report.matches("Population Projections by Special Age Group")
+                ||report.matches("Experience of Domestic Violence By Age")
+                ||report.matches("Experience of Domestic Violence by Marital Success")
+                ||report.matches("Experience of Domestic Violence by Residence")
+                ||report.matches("Prevalence Female Circumcision and Type")
                 ) {
 
             if(report.matches("Chemical Med Feed Input ")){
@@ -1859,7 +1921,7 @@ public class ReportGraph extends AppCompatActivity {
                 label_3 = "China";
                 yLabel.setText("Debt");
                 list = databaseFinance.getOutstanding_debt_lending_country();
-            }else if (report.matches("Population by Sex, Households, Density and Census Years")){
+            }else if (report.matches("Population by Sex, Households, Density and Census years")){
                 label_1 = "Male";
                 label_2 = "Female";
                 label_3 = "Total";
@@ -2009,7 +2071,7 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Locations";
                 label_3 = "Sub Locations";
                 yLabel.setText("institutions");
-                list = dbHelper.getAdministrative_unit(county);
+                list = databasePolitical.getAdministrative_unit(county);
             }else if(report.matches("Maternal Care")){
                 label_1 = "Receiving Antenatal Care From a Skilled Provider";
                 label_2 = "Delivered in a Health Facility";
@@ -2034,6 +2096,31 @@ public class ReportGraph extends AppCompatActivity {
                 label_3 = "Power and Telegraph";
                 yLabel.setText("Value");
                 list = databaseLandClimate.getRecord_Sale_of_Government_Products();
+            }else if (report.matches("Population Projections by Special Age Group")){
+                label_1 = "Range below 18";
+                label_2 = "Range 18 plus";
+                label_3 = "Range 65 plus";
+                list = databasePopulation.getPopulationprojectionsbyspecialagegroups(county,choice);
+            }else if (report.matches("Experience of Domestic Violence By Age")){
+                label_1 = "Physical Violence";
+                label_2 = "Sexual Violence";
+                label_3 = "Physical and Sexual Violence";
+                list = databaseGovernance.getExperience_of_Domestic_Violence_By_Age(selection);
+            }else if (report.matches("Experience of Domestic Violence by Marital Success")){
+                label_1 = "Physical Violence";
+                label_2 = "Sexual Violence";
+                label_3 = "Physical and Sexual Violence";
+                list = databaseGovernance.getExperience_of_Domestic_Violence_By_Marital_Success(selection);
+            }else if (report.matches("Experience of Domestic Violence by Residence")){
+                label_1 = "Physical Violence";
+                label_2 = "Sexual Violence";
+                label_3 = "Physical and Sexual Violence";
+                list = databaseGovernance.getExperience_of_Domestic_Violence_By_Residence(selection);
+            }else if (report.matches("Prevalence Female Circumcision and Type")){
+                label_1 = "Cut - No Flesh Removed";
+                label_2 = "Cut - Flesh Removed";
+                label_3 = "Sewn Closed";
+                list = databaseGovernance.getPrevalence_Female_Circumcision_and_Type(selection);
             }
 
 
@@ -2062,7 +2149,7 @@ public class ReportGraph extends AppCompatActivity {
         }
 
         if(report.matches("Population Projections by Selected Age Group")
-                ||report.matches("Population Projections by Special Age Group")
+                //||report.matches("Population Projections by Special Age Group")
                 ||report.matches("Death")
                 ||report.matches("Diseases 2009 to 2015")
                 ||report.matches("Medical Personnel")
@@ -2084,14 +2171,14 @@ public class ReportGraph extends AppCompatActivity {
                 label_4 = "Range 60 plus";
                 yLabel.setText("Population");
                 list = databasePopulation.getPopulationprojectionsbyselectedagegroup(county);
-            }else if (report.matches("Population Projections by Special Age Group")){
+            }/*else if (report.matches("Population Projections by Special Age Group")){
                 label_1 = "Under 1";
                 label_2 = "Range below 18";
                 label_3 = "Range 18 plus";
                 label_4 = "Range 65 plus";
                 yLabel.setText("Population");
                 list = databasePopulation.getPopulationprojectionsbyspecialagegroups(county,choice);
-            }else if (report.matches("Death")){
+            }*/else if (report.matches("Death")){
                 label_1 = "Cancer";
                 label_2 = "HIV/AIDS";
                 label_3 = "Malaria";

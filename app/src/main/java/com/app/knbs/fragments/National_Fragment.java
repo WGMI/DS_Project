@@ -132,7 +132,7 @@ public class National_Fragment extends Fragment {
                 databaseGovernanceApi = new DatabaseGovernanceApi(getContext());
                 databaseGovernanceApi.loadData(dataFetchingDialog);
                 break;
-            case "Money And Banking" :
+            case "Money and Banking" :
                 databaseMoneyAndBankingApi = new DatabaseMoneyAndBankingApi(getContext());
                 databaseMoneyAndBankingApi.loadData(dataFetchingDialog);
                 break;
@@ -168,6 +168,8 @@ public class National_Fragment extends Fragment {
                 databaseLandClimateApi = new DatabaseLandClimateApi(getContext());
                 databaseLandClimateApi.loadData(dataFetchingDialog);
                 break;
+            default:
+                Log.d(TAG, "onCreateView: No sector loaded");
         }
 
 

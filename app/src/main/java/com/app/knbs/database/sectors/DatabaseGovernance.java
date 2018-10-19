@@ -807,7 +807,7 @@ public class DatabaseGovernance {
         //String query = "SELECT reg_voters FROM governance_registered_voters_by_county_and_by_sex e " +
         //        "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"' AND gender='"+choice+"' GROUP BY county_name ";
 
-        String query = "SELECT  SUM(CASE WHEN gender='Male' THEN reg_voters ELSE 0 END) AS Male, SUM(CASE WHEN gender='Female' THEN reg_voters ELSE 0 END) AS Female " +
+        String query = "SELECT  SUM(CASE WHEN gender LIKE 'Male' THEN reg_voters ELSE 0 END) AS Male, SUM(CASE WHEN gender='Female' THEN reg_voters ELSE 0 END) AS Female " +
                 ", SUM(CASE WHEN gender='Total' THEN reg_voters ELSE 0 END) AS Total FROM governance_registered_voters_by_county_and_by_sex e " +
                 "JOIN counties c ON e.county_id=c.county_id WHERE county_name='"+county+"'";
         Cursor cursor = db.rawQuery(query, null);
@@ -947,4 +947,313 @@ public class DatabaseGovernance {
         return list;
     }
 
+    public List<String> getDomesticViolenceAgeGroups() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> offence = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(age) FROM governance_experienceof_domestic_violence_by_age ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            offence.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return offence;
+    }
+
+    public List<Sector_Data> getExperience_of_Domestic_Violence_By_Age(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select sum(percentage_experienced_physical_violence)," +
+                "sum(percentage_experienced_sexual_violence)," +
+                "sum(percentage_experienced_physical_and_sexual_violence) " +
+                "from governance_experienceof_domestic_violence_by_age where age ='"+choice+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("Untimed");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            data.setSet_C(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getDomesticViolenceMaritalStatus() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> offence = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(marital_status) FROM governance_experienceof_domestic_violence_by_marital_success ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            offence.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return offence;
+    }
+
+    public List<Sector_Data> getExperience_of_Domestic_Violence_By_Marital_Success(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select sum(percentage_experienced_physical_violence)," +
+                "sum(percentage_experienced_sexual_violence)," +
+                "sum(percentage_experienced_physical_and_sexual_violence) " +
+                "from governance_experienceof_domestic_violence_by_marital_success where marital_status ='"+choice+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("Untimed");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            data.setSet_C(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getDomesticViolenceResidences() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> offence = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(residence) FROM governance_experienceof_domestic_violence_by_residence ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            offence.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return offence;
+    }
+
+    public List<Sector_Data> getExperience_of_Domestic_Violence_By_Residence(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select sum(percentage_experienced_physical_violence)," +
+                "sum(percentage_experienced_sexual_violence)," +
+                "sum(percentage_experienced_physical_and_sexual_violence) " +
+                "from governance_experienceof_domestic_violence_by_residence where residence ='"+choice+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("Untimed");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            data.setSet_C(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getCircumcisionKnowledgeAgeGroups() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(age) FROM governance_knowledge_and_prevalence_of_female_circumcision ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getKnowledge_and_Prevalence_of_Female_Circumcision(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select AVG(percentage_women_heard_of_FC)," +
+                "AVG(percentage_women_not_heard_of_FC) " +
+                "from governance_knowledge_and_prevalence_of_female_circumcision where age ='"+choice+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("Average as of 2014");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getMNACategories() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(status) FROM governance_members_of_nationalassembly_and_senators ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getMembers_of_National_Assembly_and_Senators(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select men,women " +
+                "from governance_members_of_nationalassembly_and_senators where status ='"+choice+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPersons_Reported_to_have_Committed_Defilement() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select year, " +
+                "sum(case when gender = 'male' then number else 0 end)," +
+                "sum(case when gender = 'female' then number else 0 end) " +
+                "from governance_persons_reported_tohave_committed_defilement group by year";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPersons_Reported_to_have_Committed_Rape() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select year, " +
+                "sum(case when gender = 'male' then number else 0 end)," +
+                "sum(case when gender = 'female' then number else 0 end) " +
+                "from governance_persons_reported_tohave_committed_rape group by year";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getTotal_Prisoners_Committed_For_Debt_by_Sex() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select year, " +
+                "sum(case when gender = 'male' then number else 0 end)," +
+                "sum(case when gender = 'female' then number else 0 end) " +
+                "from governance_total_prisoners_committed_for_debt_bysex group by year";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getFemaleCircumcisionAgeGroups() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(age) FROM governance_prevalence_female_circumcision_and_type ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPrevalence_Female_Circumcision_and_Type(String choice) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select cut_no_flesh_removed, " +
+                "cut_flesh_removed," +
+                "sewn_closed " +
+                "from governance_prevalence_female_circumcision_and_type where age = '"+choice+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            data.setSet_C(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
 }
