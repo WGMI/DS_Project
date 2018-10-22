@@ -46,10 +46,6 @@ public class Counties_Fragment extends Fragment  {
     private List<Report> reportList;
     private String sector,source,api;
 
-    private ProgressDialog dataFetchingDialog;
-
-    private DatabaseMoneyAndBankingApi databaseMoneyAndBankingApi;
-
     public Counties_Fragment() {
         // Required empty public constructor
     }
@@ -75,23 +71,9 @@ public class Counties_Fragment extends Fragment  {
 
         dbHelper = new DatabaseHelper(getContext());
 
-        dataFetchingDialog = new ProgressDialog(getContext());
-        dataFetchingDialog.setTitle("Fetching Data");
-        dataFetchingDialog.setMessage("Please wait...");
-        dataFetchingDialog.setCanceledOnTouchOutside(false);
-
         dbHelper = new DatabaseHelper(getContext());
 
         adapter = new ReportsCountiesAdapter(getContext(), reportList);
-
-        switch (sector){
-            case "Money And Banking" :
-                databaseMoneyAndBankingApi = new DatabaseMoneyAndBankingApi(getContext());
-                databaseMoneyAndBankingApi.loadData(dataFetchingDialog);
-                break;
-            default:
-                Log.d(TAG, "onCreateView: No sector loaded");
-        }
 
         assert recyclerView != null;
         recyclerView.setHasFixedSize(true);

@@ -122,7 +122,7 @@ public class DatabaseHealth {
         List<Sector_Data> list = new ArrayList<>();
         while(cursor.moveToNext()) {
             Sector_Data data = new Sector_Data();
-            data.setYear("2014");
+            data.setYear("2013");
             data.setSet_A(cursor.getString(0));
             data.setSet_B(cursor.getString(1));
             data.setSet_C(cursor.getString(2));
@@ -186,7 +186,7 @@ public class DatabaseHealth {
     public List<Sector_Data> getNutritional_status_of_women(String county) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
 
-        String query = "SELECT undernutrition,normal,overweight,obese FROM health_nutritional_status_of_women e" +
+        String query = "SELECT normal,overweight,obese FROM health_nutritional_status_of_women e" +
                 "       JOIN counties c ON e.county_id=c.county_id " +
                 "       WHERE county_name='"+county+"' ";
         Cursor cursor = db.rawQuery(query, null);
@@ -199,7 +199,6 @@ public class DatabaseHealth {
             data.setSet_A(cursor.getString(0));
             data.setSet_B(cursor.getString(1));
             data.setSet_C(cursor.getString(2));
-            data.setSet_D(cursor.getString(3));
             list.add(data);
         }
         cursor.close();
@@ -617,6 +616,381 @@ public class DatabaseHealth {
             data.setYear(cursor.getString(0));
             data.setSet_A(cursor.getString(1));
             list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getEducationStatuses() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(education_status) FROM health_fertility_by_education_status ";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getFertility_by_Education_Status(String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        String query =
+                "SELECT year,fertility FROM " +
+                        "health_fertility_by_education_status WHERE education_status='" + selection + "' group by year";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getFertilityAgeGroups() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(age_group) FROM health_fertility_rate_by_age_and_residence";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getFertility_RatebyAgeandResidence(String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select year, " +
+                "avg(case when residence = 'Urban' then fertility_rate else 0 end)," +
+                "avg(case when residence = 'Rural' then fertility_rate else 0 end) " +
+                "from health_fertility_rate_by_age_and_residence where age_group = '"+selection+"' group by year";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getMortalityStatus() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(status) FROM health_early_childhood_mortality_rates_by_sex";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getEarly_Childhood_Mortality_Rates_by_Sex(String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select year, " +
+                "avg(case when gender = 'Male' then mortality_rate else 0 end)," +
+                "avg(case when gender = 'Female' then mortality_rate else 0 end) " +
+                "from health_early_childhood_mortality_rates_by_sex where status = '"+selection+"' group by year";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getDeliveryPlaces() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(place) FROM health_place_of_delivery";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPlace_of_Delivery(String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        String query =
+                "SELECT year,number FROM " +
+                        "health_place_of_delivery WHERE place='" + selection + "' group by year";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear(cursor.getString(0));
+            data.setSet_A(cursor.getString(1));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getOverweightAgeGroups() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(age_group) FROM health_prevalence_of_overweight_and_obesity";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPrevalence_of_Overweight_and_Obesity(String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        int num;
+        String query = "select " +
+                "total " +
+                "from health_prevalence_of_overweight_and_obesity where category = 'Number' and age_group = '"+selection+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("As of 2015");
+            data.setSet_A(cursor.getString(0));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getTobaccoCategories() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(category) FROM health_percentage_adults_who_are_current_users";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPercentage_of_Adults_users_of_tobacco_products(String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT men,women FROM health_percentage_adults_who_are_current_users " +
+                "WHERE age_group='Total' AND category='"+selection+"' ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("2014");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getDrinkerAgeGroups() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(age) FROM health_percentage_who_drink_alcohol_by_age";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getPercentage_of_Adults_who_drink_alcohol(String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT men,women FROM health_percentage_who_drink_alcohol_by_age " +
+                "WHERE age='"+selection+"'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("2014");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getSupplements() {
+        List<String> list = new ArrayList<>();
+        list.add("zinc_solution");
+        list.add("sugar_salt_solution");
+        list.add("other_solutions");
+        list.add("none");
+        list.add("not_stated");
+        return list;
+    }
+
+    public List<Sector_Data> getkihibs_children_by_additional_supplement(String county,String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT avg("+selection+") FROM health_kihibs_children_by_additional_supplement e" +
+                " JOIN counties c ON e.county_id=c.county_id " +
+                " WHERE county_name='"+county+"' group by county_name";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("2014");
+            data.setSet_A(cursor.getString(0));
+
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getAssistant() {
+        List<String> list = new ArrayList<>();
+        list.add("doctor");
+        list.add("midwife_nurse");
+        list.add("tba");
+        list.add("ttba");
+        list.add("self");
+        list.add("other");
+        list.add("not_stated");
+        return list;
+    }
+
+    public List<Sector_Data> getKihibs_children_assisted_at_birth(String county,String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT avg("+selection+") FROM health_kihibs_children_by_who_assisted_at_birth e" +
+                " JOIN counties c ON e.county_id=c.county_id" +
+                " WHERE county_name='"+county+"' group by county_name";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("2014");
+            data.setSet_A(cursor.getString(0));
+
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<String> getMeaslesCategory() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        List<String> list = new ArrayList<>();
+        int num;
+        String query = "SELECT DISTINCT(measles_vaccination) FROM health_kihibs_children_immmunized_against_measles";
+        Cursor cursor = db.rawQuery(query, null);
+        num = cursor.getCount();
+        Log.d(TAG, "rows "+num+"\n"+query);
+
+        while(cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+
+    public List<Sector_Data> getKihibs_children_immunized(String county, String selection) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "SELECT proportion FROM health_kihibs_children_immmunized_against_measles e" +
+                " JOIN counties c ON e.county_id=c.county_id " +
+                "WHERE county_name='"+county+"' AND measles_vaccination='"+selection+"' GROUP BY county_name ";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "Query"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data health = new Sector_Data();
+            health.setYear("2014");
+            health.setSet_A(cursor.getString(0));
+            list.add(health);
         }
         cursor.close();
         db.close();

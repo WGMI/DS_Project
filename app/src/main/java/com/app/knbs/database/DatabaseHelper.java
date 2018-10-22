@@ -183,14 +183,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Sector> getSectorsReports(String sector_name, String region) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
         int num;
-        String query = "SELECT * FROM sectors WHERE sector_name like '"+sector_name+"' AND coverage='"+region+"' AND isActive='1'";
+        String query = "SELECT * FROM sectors WHERE sector_name like '"+sector_name+"' AND lower(coverage)=lower('"+region+"') AND isActive='1'";
         if(sector_name.contains("Environment") && region.contains("nation")){
             query = "SELECT * FROM sectors WHERE sector_name like '%Environment and Natural Resources%' AND coverage='national' and isActive='1'";
         }
         Cursor cursor = db.rawQuery(query, null);
         num = cursor.getCount();
         if(num == 0){
-            query = "SELECT * FROM sectors WHERE sector_name='"+sector_name+"' AND coverage='"+region+"' AND isActive=1";
+            query = "SELECT * FROM sectors WHERE sector_name='"+sector_name+"' AND lower(coverage)=lower('"+region+"') AND isActive=1";
             cursor = db.rawQuery(query, null);
             num = cursor.getCount();
         }

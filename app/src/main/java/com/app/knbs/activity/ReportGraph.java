@@ -33,6 +33,7 @@ import com.app.knbs.database.sectors.DatabaseEnergy;
 import com.app.knbs.database.sectors.DatabaseFinance;
 import com.app.knbs.database.sectors.DatabaseGovernance;
 import com.app.knbs.database.sectors.DatabaseHealth;
+import com.app.knbs.database.sectors.DatabaseHousing;
 import com.app.knbs.database.sectors.DatabaseLabour;
 import com.app.knbs.database.sectors.DatabaseLandClimate;
 import com.app.knbs.database.sectors.DatabaseManufacturing;
@@ -98,6 +99,7 @@ public class ReportGraph extends AppCompatActivity {
     private DatabaseTourism databaseTourism;
     private DatabaseMoneyAndBanking databaseMoneyAndBanking;
     private DatabasePolitical databasePolitical;
+    private DatabaseHousing databaseHousing;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -122,6 +124,7 @@ public class ReportGraph extends AppCompatActivity {
         databaseTourism =  new DatabaseTourism(this);
         databaseMoneyAndBanking =  new DatabaseMoneyAndBanking(this);
         databasePolitical = new DatabasePolitical(this);
+        databaseHousing = new DatabaseHousing(this);
 
         Intent intent = getIntent();
         String sector = intent.getStringExtra("sector");
@@ -297,6 +300,16 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Knowledge and Prevalence of Female Circumcision")
                 ||report.contains("Members of National Assembly and Senators")
                 ||report.contains("Prevalence Female Circumcision and Type")
+                ||report.contains("Fertility by Education Status")
+                ||report.contains("Fertility Rate by Age and Residence")
+                ||report.contains("Early Childhood Mortality Rates by Sex")
+                ||report.contains("Place of Delivery")
+                ||report.contains("Prevalence of Overweight and Obesity")
+                ||report.contains("Percentage of Adults 15+ old who are current users of various smokeless tobacco products by sex")
+                ||report.contains("Percentage of Women and Men aged 15-49 who drink alcohol by age, 2014")
+                ||report.contains("Kihibs children by additional supplement")
+                ||report.contains("Kihibs children assisted at birth")
+                ||report.contains("Kihibs children immunized against measles")
                 ) {
             List<String> list = null;
             selectionLabel.setVisibility(View.VISIBLE);
@@ -569,6 +582,36 @@ public class ReportGraph extends AppCompatActivity {
             }else if (report.contains("Prevalence Female Circumcision and Type")){
                 selectionLabel.setText("Age Group");
                 list = databaseGovernance.getFemaleCircumcisionAgeGroups();
+            }else if (report.contains("Fertility by Education Status")){
+                selectionLabel.setText("Status");
+                list = databaseHealth.getEducationStatuses();
+            }else if (report.contains("Fertility Rate by Age and Residence")){
+                selectionLabel.setText("Age Group");
+                list = databaseHealth.getFertilityAgeGroups();
+            }else if (report.contains("Early Childhood Mortality Rates by Sex")){
+                selectionLabel.setText("Status");
+                list = databaseHealth.getMortalityStatus();
+            }else if (report.contains("Place of Delivery")){
+                selectionLabel.setText("Status");
+                list = databaseHealth.getDeliveryPlaces();
+            }else if (report.contains("Prevalence of Overweight and Obesity")){
+                selectionLabel.setText("Age Groups");
+                list = databaseHealth.getOverweightAgeGroups();
+            }else if (report.contains("Percentage of Adults 15+ old who are current users of various smokeless tobacco products by sex")){
+                selectionLabel.setText("Category");
+                list = databaseHealth.getTobaccoCategories();
+            }else if (report.contains("Percentage of Women and Men aged 15-49 who drink alcohol by age, 2014")){
+                selectionLabel.setText("Age Groups");
+                list = databaseHealth.getDrinkerAgeGroups();
+            }else if (report.contains("Kihibs children by additional supplement")){
+                selectionLabel.setText("Supplement");
+                list = databaseHealth.getSupplements();
+            }else if (report.contains("Kihibs children assisted at birth")){
+                selectionLabel.setText("Assistant");
+                list = databaseHealth.getAssistant();
+            }else if (report.contains("Kihibs children immunized against measles")){
+                selectionLabel.setText("Category");
+                list = databaseHealth.getMeaslesCategory();
             }
 
             select.setVisibility(View.VISIBLE);
@@ -978,6 +1021,12 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Value of Total Minerals")
                 ||report.contains("Population of Children under 18 by orphanhood")
                 ||report.contains("Population Marital Status above 18 years")
+                ||report.contains("Fertility by Education Status")
+                ||report.contains("Place of Delivery")
+                ||report.contains("Prevalence of Overweight and Obesity")
+                ||report.contains("Kihibs children by additional supplement")
+                ||report.contains("Kihibs children assisted at birth")
+                ||report.contains("Kihibs children immunized against measles")
                 ) {
             if(report.matches("Crimes Reported to Police by Command Stations")){
                 label_1 = "Crimes";
@@ -1323,6 +1372,32 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = "Percentage";
                 yLabel.setText("Percentage");
                 list = databasePopulation.getPopulation_Marital_Status_above_18_years(county,selection);
+            }else if (report.contains("Fertility by Education Status")){
+                label_1 = "Percentage";
+                yLabel.setText("Percentage");
+                list = databaseHealth.getFertility_by_Education_Status(selection);
+            }else if (report.contains("Place of Delivery")){
+                label_1 = "Rate";
+                yLabel.setText("Rate");
+                list = databaseHealth.getPlace_of_Delivery(selection);
+            }else if (report.contains("Prevalence of Overweight and Obesity")){
+                label_1 = "Number";
+                yLabel.setText("Number");
+                list = databaseHealth.getPrevalence_of_Overweight_and_Obesity(selection);
+            }else if (report.contains("Kihibs children by additional supplement")){
+                label_1 = "Percent";
+                yLabel.setText("Percent");
+                Log.d("DatabaseHelper", "onProgressChanged: We are here");
+                list = databaseHealth.getkihibs_children_by_additional_supplement(county,selection);
+            }else if (report.contains("Kihibs children assisted at birth")){
+                label_1 = "Percent";
+                yLabel.setText("Percent");
+                list = databaseHealth.getKihibs_children_assisted_at_birth(county,selection);
+            }else if (report.contains("Kihibs children immunized against measles")){
+                label_1 = "Percent";
+                yLabel.setText("Percent");
+                Log.d("DatabaseHelper", "onProgressChanged: Here");
+                list = databaseHealth.getKihibs_children_immunized(county,selection);
             }
 
             if (list != null) {
@@ -1416,6 +1491,10 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Persons Reported to have Committed Defilement")
                 ||report.contains("Persons Reported to have Committed Rape")
                 ||report.contains("Total Prisoners Committed For Debt by Sex")
+                ||report.contains("Fertility Rate by Age and Residence")
+                ||report.contains("Early Childhood Mortality Rates by Sex")
+                ||report.contains("Percentage of Adults 15+ old who are current users of various smokeless tobacco products by sex")
+                ||report.contains("Percentage of Women and Men aged 15-49 who drink alcohol by age, 2014")
                 ){
 
             if(report.matches("Births and Deaths by Sex")){
@@ -1765,6 +1844,26 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Women";
                 yLabel.setText("Number");
                 list = databaseGovernance.getTotal_Prisoners_Committed_For_Debt_by_Sex();
+            }else if (report.contains("Fertility Rate by Age and Residence")){
+                label_1 = "Urban";
+                label_2 = "Rural";
+                yLabel.setText("Percent");
+                list = databaseHealth.getFertility_RatebyAgeandResidence(selection);
+            }else if (report.contains("Early Childhood Mortality Rates by Sex")){
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Percent");
+                list = databaseHealth.getEarly_Childhood_Mortality_Rates_by_Sex(selection);
+            }else if (report.contains("Percentage of Adults 15+ old who are current users of various smokeless tobacco products by sex")){
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Percent");
+                list = databaseHealth.getPercentage_of_Adults_users_of_tobacco_products(selection);
+            }else if (report.contains("Percentage of Women and Men aged 15-49 who drink alcohol by age, 2014")){
+                label_1 = "Male";
+                label_2 = "Female";
+                yLabel.setText("Percent");
+                list = databaseHealth.getPercentage_of_Adults_who_drink_alcohol(selection);
             }
 
             if (list != null) {
@@ -1834,6 +1933,10 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Experience of Domestic Violence by Marital Success")
                 ||report.matches("Experience of Domestic Violence by Residence")
                 ||report.matches("Prevalence Female Circumcision and Type")
+                ||report.matches("Nutritional Status of Women")
+                ||report.matches("waste disposal method")
+                ||report.matches("volume of water used")
+                ||report.matches("time taken to fetch drinking water")
                 ) {
 
             if(report.matches("Chemical Med Feed Input ")){
@@ -2121,6 +2224,30 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Cut - Flesh Removed";
                 label_3 = "Sewn Closed";
                 list = databaseGovernance.getPrevalence_Female_Circumcision_and_Type(selection);
+            }else if(report.matches("Nutritional Status of Women")) {
+                label_1 = "Normal";
+                label_2 = "Overweight";
+                label_3 = "Obese";
+                yLabel.setText("status");
+                list = databaseHealth.getNutritional_status_of_women(county);
+            }else if(report.matches("waste disposal method")) {
+                label_1 = "Government";
+                label_2 = "Community";
+                label_3 = "Private";
+                yLabel.setText("status");
+                list = databaseHousing.getwaste_disposal_method(county);
+            }else if(report.matches("volume of water used")) {
+                label_1 = "0 to 1000 lts";
+                label_2 = "1000 to 2000 lts";
+                label_3 = "2000 to 3000 lts";
+                yLabel.setText("Litres");
+                list = databaseHousing.getvolume_of_water_used(county);
+            }else if(report.matches("time taken to fetch drinking water")) {
+                label_1 = "Zero";
+                label_2 = "Less than 30";
+                label_3 = "More than 30";
+                yLabel.setText("Minutes");
+                list = databaseHousing.gettime_taken(county);
             }
 
 
@@ -2159,7 +2286,6 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("County Revenue")
                 ||report.matches("Distribution of Outpatient Visits by Type of Health Care")
                 ||report.matches("Insurance Coverage by Counties and Types")
-                ||report.matches("Nutritional Status of Women")
                 ||report.matches("Cases Handled By Various Courts")
                 ||report.matches("Quarterly Civil Engineering Cost Index")
                 ){
@@ -2241,13 +2367,6 @@ public class ReportGraph extends AppCompatActivity {
                 label_4 = "Private";
                 yLabel.setText("coverage");
                 list = databaseHealth.getInsurance_coverage_by_counties_and_types(county);
-            }else if(report.matches("Nutritional Status of Women")) {
-                label_1 = "Under Nutrition";
-                label_2 = "Normal";
-                label_3 = "Overweight";
-                label_4 = "Obese";
-                yLabel.setText("status");
-                list = databaseHealth.getNutritional_status_of_women(county);
             }else if(report.matches("Cases Handled By Various Courts")){
                 label_1 = "Magistrate Court";
                 label_2 = "High Court";
