@@ -34,6 +34,7 @@ import com.app.knbs.database.sectors.DatabaseFinance;
 import com.app.knbs.database.sectors.DatabaseGovernance;
 import com.app.knbs.database.sectors.DatabaseHealth;
 import com.app.knbs.database.sectors.DatabaseHousing;
+import com.app.knbs.database.sectors.DatabaseICT;
 import com.app.knbs.database.sectors.DatabaseLabour;
 import com.app.knbs.database.sectors.DatabaseLandClimate;
 import com.app.knbs.database.sectors.DatabaseManufacturing;
@@ -100,6 +101,7 @@ public class ReportGraph extends AppCompatActivity {
     private DatabaseMoneyAndBanking databaseMoneyAndBanking;
     private DatabasePolitical databasePolitical;
     private DatabaseHousing databaseHousing;
+    private DatabaseICT databaseICT;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -125,6 +127,7 @@ public class ReportGraph extends AppCompatActivity {
         databaseMoneyAndBanking =  new DatabaseMoneyAndBanking(this);
         databasePolitical = new DatabasePolitical(this);
         databaseHousing = new DatabaseHousing(this);
+        databaseICT = new DatabaseICT(this);
 
         Intent intent = getIntent();
         String sector = intent.getStringExtra("sector");
@@ -1027,6 +1030,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Kihibs children by additional supplement")
                 ||report.contains("Kihibs children assisted at birth")
                 ||report.contains("Kihibs children immunized against measles")
+                ||report.contains("population with mobile phone and averagesims")
                 ) {
             if(report.matches("Crimes Reported to Police by Command Stations")){
                 label_1 = "Crimes";
@@ -1396,8 +1400,11 @@ public class ReportGraph extends AppCompatActivity {
             }else if (report.contains("Kihibs children immunized against measles")){
                 label_1 = "Percent";
                 yLabel.setText("Percent");
-                Log.d("DatabaseHelper", "onProgressChanged: Here");
                 list = databaseHealth.getKihibs_children_immunized(county,selection);
+            }else if (report.contains("population with mobile phone and averagesims")){
+                label_1 = "Percent";
+                yLabel.setText("Percent");
+                list = databaseICT.getpopulationwithmobilephone(county);
             }
 
             if (list != null) {
@@ -1495,6 +1502,8 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Early Childhood Mortality Rates by Sex")
                 ||report.contains("Percentage of Adults 15+ old who are current users of various smokeless tobacco products by sex")
                 ||report.contains("Percentage of Women and Men aged 15-49 who drink alcohol by age, 2014")
+                ||report.contains("households owned ict equipment services")
+                ||report.contains("population above 18 subscribed mobile money")
                 ){
 
             if(report.matches("Births and Deaths by Sex")){
@@ -1507,6 +1516,11 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Deaths";
                 yLabel.setText("People");
                 list = databasePopulation.getVital_statistics_expectedandregisteredbirthsanddeaths(county, choice);
+            }else if (report.matches("households owned ict equipment services")){
+                label_1 = "Computers";
+                label_2 = "TVs";
+                yLabel.setText("Percent");
+                list = databaseICT.gethouseholdsownedictequipmentservices(county);
             }else if (report.matches("Secondary School Enrollment by Level and Sex")){
                 label_1 = "Boys";
                 label_2 = "Girls";
@@ -1864,6 +1878,11 @@ public class ReportGraph extends AppCompatActivity {
                 label_2 = "Female";
                 yLabel.setText("Percent");
                 list = databaseHealth.getPercentage_of_Adults_who_drink_alcohol(selection);
+            }else if (report.contains("population above 18 subscribed mobile money")){
+                label_1 = "Mobile Money";
+                label_2 = "Mobile Banking";
+                yLabel.setText("Percent");
+                list = databaseICT.getpopulationabove18subscribedmobilemoney(county);
             }
 
             if (list != null) {
@@ -1937,6 +1956,22 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("waste disposal method")
                 ||report.matches("volume of water used")
                 ||report.matches("time taken to fetch drinking water")
+                ||report.matches("sharing of toilet")
+                ||report.matches("place of washing hands near toilet")
+                ||report.matches("owner occupier dwellings")
+                ||report.matches("methods used to make water safer")
+                ||report.matches("hhholds by habitable rooms")
+                ||report.matches("hholds by housing tenure")
+                ||report.matches("hholds by type of housing unit")
+                ||report.matches("primary type of cooking appliance")
+                ||report.matches("hholds in rented dwellings")
+                ||report.matches("main floor material")
+                ||report.matches("main roofing material")
+                ||report.matches("main source of cooking fuel")
+                ||report.matches("main source of drinking water")
+                ||report.matches("main source of ligthing fuel")
+                ||report.matches("main toilet facility")
+                ||report.matches("main wall material")
                 ) {
 
             if(report.matches("Chemical Med Feed Input ")){
@@ -2248,6 +2283,102 @@ public class ReportGraph extends AppCompatActivity {
                 label_3 = "More than 30";
                 yLabel.setText("Minutes");
                 list = databaseHousing.gettime_taken(county);
+            }else if(report.matches("sharing of toilet")) {
+                label_1 = "Shared";
+                label_2 = "Not Shared";
+                label_3 = "Not Stated";
+                yLabel.setText("Percent");
+                list = databaseHousing.getsharing_of_toilet(county);
+            }else if(report.matches("place of washing hands near toilet")) {
+                label_1 = "Place";
+                label_2 = "No Place";
+                label_3 = "Not Stated";
+                yLabel.setText("Percent");
+                list = databaseHousing.getplace_of_washing_hands(county);
+            }else if(report.matches("owner occupier dwellings")) {
+                label_1 = "Purchased Cash Loan";
+                label_2 = "Constructed Cash Loan";
+                label_3 = "Other";
+                yLabel.setText("Percent");
+                list = databaseHousing.getowner_occupier_dwellings(county);
+            }else if(report.matches("methods used to make water safer")) {
+                label_1 = "Boil";
+                label_2 = "Water Filter";
+                label_3 = "Other";
+                yLabel.setText("Percent");
+                list = databaseHousing.getmethods_used_to_make_water_safer(county);
+            }else if(report.matches("hhholds by habitable rooms")) {
+                label_1 = "One";
+                label_2 = "Two";
+                label_3 = "Three";
+                yLabel.setText("Percent");
+                list = databaseHousing.gethhholds_by_habitable_rooms(county);
+            }else if(report.matches("hholds by housing tenure")) {
+                label_1 = "Owner Occupier";
+                label_2 = "Pays Rent";
+                label_3 = "No Rent (consensually)";
+                yLabel.setText("Percent");
+                list = databaseHousing.gethholds_by_housing_tenure(county);
+            }else if(report.matches("hholds by type of housing unit")) {
+                label_1 = "Flat";
+                label_2 = "Maisonnette";
+                label_3 = "Shanty";
+                yLabel.setText("Percent");
+                list = databaseHousing.gethholds_by_type_of_housing_unit(county);
+            }else if(report.matches("primary type of cooking appliance")) {
+                label_1 = "Ordinary Jiko";
+                label_2 = "Gas";
+                label_3 = "Electric cooker";
+                yLabel.setText("Percent");
+                list = databaseHousing.getprimary_type_of_cooking_appliance(county);
+            }else if(report.matches("hholds in rented dwellings")) {
+                label_1 = "National Government";
+                label_2 = "Company (Direct)";
+                label_3 = "Individual (Direct)";
+                yLabel.setText("Percent");
+                list = databaseHousing.gethholds_in_rented_dwellings(county);
+            }else if(report.matches("main floor material")) {
+                label_1 = "Tiles";
+                label_2 = "Cement";
+                label_3 = "Wood";
+                yLabel.setText("Percent");
+                list = databaseHousing.getmain_floor_material(county);
+            }else if(report.matches("main roofing material")) {
+                label_1 = "Tiles";
+                label_2 = "Cement";
+                label_3 = "Mud";
+                yLabel.setText("Percent");
+                list = databaseHousing.getmain_roofing_material(county);
+            }else if(report.matches("main source of cooking fuel")) {
+                label_1 = "Firewood";
+                label_2 = "Electricity";
+                label_3 = "Biogas";
+                yLabel.setText("Percent");
+                list = databaseHousing.getmain_source_of_cooking_fuel(county);
+            }else if(report.matches("main source of drinking water")) {
+                label_1 = "Piped Dwelling";
+                label_2 = "Rain";
+                label_3 = "Truck Vendor";
+                yLabel.setText("Percent");
+                list = databaseHousing.getmain_source_of_drinking_water(county);
+            }else if(report.matches("main source of ligthing fuel")) {
+                label_1 = "Electricity";
+                label_2 = "Generator";
+                label_3 = "Solar Energy";
+                yLabel.setText("Percent");
+                list = databaseHousing.getmain_source_of_ligthing_fuel(county);
+            }else if(report.matches("main toilet facility")) {
+                label_1 = "Piped Sewer";
+                label_2 = "Septic Tank";
+                label_3 = "Latrine";
+                yLabel.setText("Percent");
+                list = databaseHousing.getmain_toilet_facility(county);
+            }else if(report.matches("main wall material")) {
+                label_1 = "Lime Stone";
+                label_2 = "Brick";
+                label_3 = "Cement Blocks";
+                yLabel.setText("Percent");
+                list = databaseHousing.getmain_wall_material(county);
             }
 
 
@@ -2412,6 +2543,14 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Elementary Aggregates Weights in the CPI Baskets")
                 ||report.matches("Group Weights for Kenya CPI February Base Period 2009")
                 ||report.matches("Group Weights for Kenya CPI October Base Period 1997")
+                ||report.matches("households without internet by reason")
+                ||report.matches("households with tv")
+                ||report.matches("households with internet by type")
+                ||report.matches("population above 18 by reason not having phone")
+                ||report.matches("population by ictequipment and servicesused")
+                ||report.matches("population that didnt use internet byreason")
+                ||report.matches("population that used internet by purpose")
+                ||report.matches("population who used internet by place")
                 ){
 
             if(report.matches("Environmental Natural Resources Trends")){
@@ -2446,6 +2585,70 @@ public class ReportGraph extends AppCompatActivity {
                 label_5 = "Kenya";
                 yLabel.setText("CPI Basket");
                 list = databaseCPI.getCpi_group_weights_for_kenya_cpi_october_base_1997(selection);
+            }else if (report.matches("households without internet by reason")) {
+                label_1 = "Don't Need";
+                label_2 = "Lack of Skills";
+                label_3 = "No Network";
+                label_4 = "Access Available Elsewhere";
+                label_5 = "High Cost";
+                yLabel.setText("Percent");
+                list = databaseICT.gethouseholdswithoutinternetbyreason(county);
+            }else if (report.matches("households with tv")) {
+                label_1 = "Digital_tv";
+                label_2 = "Pay TV";
+                label_3 = "Free to Air";
+                label_4 = "IP TV";
+                label_5 = "None";
+                yLabel.setText("Percent");
+                list = databaseICT.gethouseholdswithtv(county);
+            }else if (report.matches("households with internet by type")) {
+                label_1 = "Fixed Wired";
+                label_2 = "Fixed Wireless";
+                label_3 = "Mobile Broadband";
+                label_4 = "Mobile";
+                label_5 = "Other";
+                yLabel.setText("Percent");
+                list = databaseICT.gethouseholdswithinternetbytype(county);
+            }else if (report.matches("population above 18 by reason not having phone")) {
+                label_1 = "Too young";
+                label_2 = "Don't Need";
+                label_3 = "Phones Are Restricted";
+                label_4 = "No Network";
+                label_5 = "No Electricity";
+                yLabel.setText("Percent");
+                list = databaseICT.getpopulationabove18byreasonnothavingphone(county);
+            }else if (report.matches("population by ictequipment and servicesused")) {
+                label_1 = "TV";
+                label_2 = "Radio";
+                label_3 = "Mobile";
+                label_4 = "Computer";
+                label_5 = "Internet";
+                yLabel.setText("Percent");
+                list = databaseICT.getpopulationbyictequipmentandservicesused(county);
+            }else if (report.matches("population that didnt use internet byreason")) {
+                label_1 = "Too Young";
+                label_2 = "Don't Need";
+                label_3 = "Lack of Skills";
+                label_4 = "High Cost";
+                label_5 = "No Internet Access";
+                yLabel.setText("Percent");
+                list = databaseICT.getpopulationthatdidntuseinternetbyreason(county);
+            }else if (report.matches("population that used internet by purpose")) {
+                label_1 = "Newspaper";
+                label_2 = "Banking";
+                label_3 = "Research";
+                label_4 = "Information";
+                label_5 = "Social Networks";
+                yLabel.setText("Percent");
+                list = databaseICT.getpopulationthatusedinternetbypurpose(county);
+            }else if (report.matches("population who used internet by place")) {
+                label_1 = "Work";
+                label_2 = "Cyber Cafe";
+                label_3 = "Educational Center";
+                label_4 = "Home";
+                label_5 = "Another's Home";
+                yLabel.setText("Percent");
+                list = databaseICT.getpopulationwhousedinternetbyplace(county);
             }
 
             if (list != null) {

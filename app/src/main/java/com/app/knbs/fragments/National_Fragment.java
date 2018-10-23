@@ -21,7 +21,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.app.knbs.MainActivity;
 import com.app.knbs.R;
 import com.app.knbs.adapter.ReportsNationalAdapter;
 import com.app.knbs.adapter.model.Report;
@@ -34,10 +33,10 @@ import com.app.knbs.database.sectors.DatabaseEnergyApi;
 import com.app.knbs.database.sectors.DatabaseFinanceApi;
 import com.app.knbs.database.sectors.DatabaseGovernanceApi;
 import com.app.knbs.database.sectors.DatabaseHealthApi;
-import com.app.knbs.database.sectors.DatabaseLabour;
+import com.app.knbs.database.sectors.DatabaseHousingApi;
+import com.app.knbs.database.sectors.DatabaseICTApi;
 import com.app.knbs.database.sectors.DatabaseLabourApi;
 import com.app.knbs.database.sectors.DatabaseLandClimateApi;
-import com.app.knbs.database.sectors.DatabaseManufacturing;
 import com.app.knbs.database.sectors.DatabaseManufacturingApi;
 import com.app.knbs.database.sectors.DatabaseMoneyAndBankingApi;
 import com.app.knbs.database.sectors.DatabasePopulationApi;
@@ -77,6 +76,8 @@ public class National_Fragment extends Fragment {
     private DatabaseBuildingConstructionApi databaseBuildingConstructionApi;
     private DatabaseTourismApi databaseTourismApi;
     private DatabaseLandClimateApi databaseLandClimateApi;
+    private DatabaseHousingApi databaseHousingApi;
+    private DatabaseICTApi databaseICTApi;
 
     public National_Fragment() {
         // Required empty public constructor
@@ -167,6 +168,14 @@ public class National_Fragment extends Fragment {
             case "Environment and Natural Resources" :
                 databaseLandClimateApi = new DatabaseLandClimateApi(getContext());
                 databaseLandClimateApi.loadData(dataFetchingDialog);
+                break;
+            case "Housing" :
+                databaseHousingApi = new DatabaseHousingApi(getContext());
+                databaseHousingApi.loadData(dataFetchingDialog);
+                break;
+            case "ICT" :
+                databaseICTApi = new DatabaseICTApi(getContext());
+                databaseICTApi.loadData(dataFetchingDialog);
                 break;
             default:
                 Log.d(TAG, "onCreateView: No sector loaded");
