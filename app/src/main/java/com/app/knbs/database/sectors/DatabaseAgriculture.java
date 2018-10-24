@@ -34,8 +34,7 @@ public class DatabaseAgriculture {
         String query = "select year,total(value) as 'Total Value' \n" +
                 "from agriculture_land_potential e \n" +
                 "JOIN counties c ON e.county_id=c.county_id  \n" +
-                "JOIN agriculture_land_potential_ids i ON e.potential_id = i.potential_id\n" +
-                "WHERE county_name='Bomet'  and landPotential = 'Low Potential'\n" +
+                "WHERE county_name='"+county+"'  and potential_id = '"+choice+"'\n" +
                 "GROUP BY year ";
         Cursor cursor = db.rawQuery(query, null);
 
@@ -293,6 +292,33 @@ public class DatabaseAgriculture {
             data.setYear(cursor.getString(0));
             data.setSet_A(cursor.getString(1));
             data.setSet_B(cursor.getString(2));
+            list.add(data);
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public List<Sector_Data> getCategories_of_Land(String county) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbHelper.pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+
+        String query = "select " +
+                "high_potential,medium_potential," +
+                "low_potential " +
+                "from categories_of_land e " +
+                "JOIN counties c ON e.county_id=c.county_id where county_name='"+county+"'";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.d(TAG, "rows "+cursor.getCount()+"\n"+query);
+        List<Sector_Data> list = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Sector_Data data = new Sector_Data();
+            data.setYear("2014");
+            data.setSet_A(cursor.getString(0));
+            data.setSet_B(cursor.getString(1));
+            data.setSet_C(cursor.getString(2));
+            //data.setSet_D(cursor.getString(3));
             list.add(data);
         }
         cursor.close();

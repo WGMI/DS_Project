@@ -26,6 +26,7 @@ import com.app.knbs.adapter.ReportsNationalAdapter;
 import com.app.knbs.adapter.model.Report;
 import com.app.knbs.adapter.model.Sector;
 import com.app.knbs.database.DatabaseHelper;
+import com.app.knbs.database.sectors.DatabaseAgricultureApi;
 import com.app.knbs.database.sectors.DatabaseBuildingConstructionApi;
 import com.app.knbs.database.sectors.DatabaseCPIApi;
 import com.app.knbs.database.sectors.DatabaseEducationApi;
@@ -40,6 +41,7 @@ import com.app.knbs.database.sectors.DatabaseLandClimateApi;
 import com.app.knbs.database.sectors.DatabaseManufacturingApi;
 import com.app.knbs.database.sectors.DatabaseMoneyAndBankingApi;
 import com.app.knbs.database.sectors.DatabasePopulationApi;
+import com.app.knbs.database.sectors.DatabasePovertyApi;
 import com.app.knbs.database.sectors.DatabaseTourismApi;
 import com.app.knbs.database.sectors.DatabaseTradeCommerceApi;
 
@@ -78,6 +80,8 @@ public class National_Fragment extends Fragment {
     private DatabaseLandClimateApi databaseLandClimateApi;
     private DatabaseHousingApi databaseHousingApi;
     private DatabaseICTApi databaseICTApi;
+    private DatabaseAgricultureApi databaseAgricultureApi;
+    private DatabasePovertyApi databasePovertyApi;
 
     public National_Fragment() {
         // Required empty public constructor
@@ -176,6 +180,14 @@ public class National_Fragment extends Fragment {
             case "ICT" :
                 databaseICTApi = new DatabaseICTApi(getContext());
                 databaseICTApi.loadData(dataFetchingDialog);
+                break;
+            case "Agriculture" :
+                databaseAgricultureApi = new DatabaseAgricultureApi(getContext());
+                databaseAgricultureApi.loadData(dataFetchingDialog);
+                break;
+            case "Poverty" :
+                databasePovertyApi = new DatabasePovertyApi(getContext());
+                databasePovertyApi.loadData(dataFetchingDialog);
                 break;
             default:
                 Log.d(TAG, "onCreateView: No sector loaded");

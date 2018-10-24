@@ -18,7 +18,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.knbs.R;
 import com.app.knbs.adapter.SpinnerAdapter;
@@ -41,6 +40,7 @@ import com.app.knbs.database.sectors.DatabaseManufacturing;
 import com.app.knbs.database.sectors.DatabaseMoneyAndBanking;
 import com.app.knbs.database.sectors.DatabasePolitical;
 import com.app.knbs.database.sectors.DatabasePopulation;
+import com.app.knbs.database.sectors.DatabasePoverty;
 import com.app.knbs.database.sectors.DatabaseTourism;
 import com.app.knbs.database.sectors.DatabaseTradeCommerce;
 import com.github.mikephil.charting.charts.BarChart;
@@ -102,6 +102,7 @@ public class ReportGraph extends AppCompatActivity {
     private DatabasePolitical databasePolitical;
     private DatabaseHousing databaseHousing;
     private DatabaseICT databaseICT;
+    private DatabasePoverty databasePoverty;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -128,6 +129,7 @@ public class ReportGraph extends AppCompatActivity {
         databasePolitical = new DatabasePolitical(this);
         databaseHousing = new DatabaseHousing(this);
         databaseICT = new DatabaseICT(this);
+        databasePoverty = new DatabasePoverty(this);
 
         Intent intent = getIntent();
         String sector = intent.getStringExtra("sector");
@@ -313,6 +315,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Kihibs children by additional supplement")
                 ||report.contains("Kihibs children assisted at birth")
                 ||report.contains("Kihibs children immunized against measles")
+                ||report.contains("distribution of households by pointofpurchasedfooditems")
                 ) {
             List<String> list = null;
             selectionLabel.setVisibility(View.VISIBLE);
@@ -615,6 +618,9 @@ public class ReportGraph extends AppCompatActivity {
             }else if (report.contains("Kihibs children immunized against measles")){
                 selectionLabel.setText("Category");
                 list = databaseHealth.getMeaslesCategory();
+            }else if (report.contains("distribution of households by pointofpurchasedfooditems")){
+                selectionLabel.setText("Point of Purchase");
+                list = databasePoverty.getpointofpurchasedfooditems();
             }
 
             select.setVisibility(View.VISIBLE);
@@ -720,7 +726,7 @@ public class ReportGraph extends AppCompatActivity {
             choice_three.setText(R.string.form3);
             choice_four.setText(R.string.form4);
             choice_five.setText(R.string.all_levels);
-        }else if(report.matches("Land Potential")){
+        }else if(report.contains("Land Potential")){
             radioGroup.setVisibility(View.VISIBLE);
             choice_three.setVisibility(View.VISIBLE);
             choice_four.setVisibility(View.VISIBLE);
@@ -863,7 +869,7 @@ public class ReportGraph extends AppCompatActivity {
                     }
                 }
 
-                if(report.matches("Land Potential")){
+                if(report.contains("Land Potential")){
                     if (checkedId == R.id.choice_one) {
                         choice = "High Potential";
                         onProgressChanged();
@@ -962,7 +968,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("County Outpatient Morbidity Below Five")
                 ||report.matches("Public TIVET Education Institutions")
                 ||report.matches("KCPE Mean Subject Score")
-                ||report.matches("Land Potential")
+                ||report.contains("Land Potential")
                 ||report.matches("Revenue Collection by Amount")
                 ||report.matches("Trading Centres")
                 ||report.matches("Reported Completion of Buildings for Private Ownership")
@@ -1031,15 +1037,25 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.contains("Kihibs children assisted at birth")
                 ||report.contains("Kihibs children immunized against measles")
                 ||report.contains("population with mobile phone and averagesims")
+                ||report.contains("distribution of households by pointofpurchasedfooditems")
+                ||report.contains("food and non food expenditure per adult equivalent")
                 ) {
             if(report.matches("Crimes Reported to Police by Command Stations")){
                 label_1 = "Crimes";
                 yLabel.setText("Number of Crimes");
                 list = databaseGovernance.getCrimes_reported_to_police_by_command_stations(county);
+            }else if(report.matches("food and non food expenditure per adult equivalent")){
+                label_1 = "Expenditure";
+                yLabel.setText("KSH");
+                list = databasePoverty.getfoodxpenditureperadult(county);
             }else if(report.matches("Health Facilities by Ownership of Health Facilities")){
                 label_1 = "Facilities";
                 yLabel.setText("Number of Facilities");
                 list = databaseHealth.getHealthfacilitiesbyownershipofhealthfacilities(county,selection);
+            }else if(report.matches("distribution of households by pointofpurchasedfooditems")){
+                label_1 = "Place";
+                yLabel.setText("Percent");
+                list = databasePoverty.getdistributionofhouseholdsbypointofpurchasedfooditems(county,selection);
             }else if(report.matches("CDF Allocation")){
                 label_1 = "CDF allocation";
                 yLabel.setText("Allocation");
@@ -1120,9 +1136,9 @@ public class ReportGraph extends AppCompatActivity {
                 label_1 = selection;
                 yLabel.setText("mean score");
                 list = databaseEducation.getKcpecandidatesandmeansubjectscore_subject(selection);
-            }else if(report.matches("Land Potential")){
+            }else if(report.contains("Land Potential")){
                 label_1 = choice;
-                yLabel.setText("potential");
+                yLabel.setText("Potential");
                 list = databaseAgriculture.getLand_potential(county,choice);
             }else if(report.matches("Revenue Collection by Amount")) {
                 label_1 = selection;
@@ -1972,6 +1988,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("main source of ligthing fuel")
                 ||report.matches("main toilet facility")
                 ||report.matches("main wall material")
+                ||report.matches("Categories of Land")
                 ) {
 
             if(report.matches("Chemical Med Feed Input ")){
@@ -2379,6 +2396,12 @@ public class ReportGraph extends AppCompatActivity {
                 label_3 = "Cement Blocks";
                 yLabel.setText("Percent");
                 list = databaseHousing.getmain_wall_material(county);
+            }else if(report.matches("Categories of Land")){
+                label_1 = "High Potential";
+                label_2 = "Medium Potential";
+                label_3 = "Low Potential";
+                yLabel.setText("Acres");
+                list = databaseAgriculture.getCategories_of_Land(county);
             }
 
 
@@ -2419,6 +2442,10 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("Insurance Coverage by Counties and Types")
                 ||report.matches("Cases Handled By Various Courts")
                 ||report.matches("Quarterly Civil Engineering Cost Index")
+                ||report.matches("distribution of household food consumption")
+                ||report.matches("food estimates by residence and county")
+                ||report.matches("hardcore estimates by residence and county")
+                ||report.matches("overall estimates by residence and county")
                 ){
 
             if(report.matches("Population Projections by Selected Age Group")){
@@ -2435,7 +2462,35 @@ public class ReportGraph extends AppCompatActivity {
                 label_4 = "Range 65 plus";
                 yLabel.setText("Population");
                 list = databasePopulation.getPopulationprojectionsbyspecialagegroups(county,choice);
-            }*/else if (report.matches("Death")){
+            }*/else if (report.matches("food estimates by residence and county")){
+                label_1 = "Headcount Rate";
+                label_2 = "Distribution of Poor";
+                label_3 = "Poverty Gap";
+                label_4 = "Severity of Poverty";
+                yLabel.setText("Percent");
+                list = databasePoverty.getfoodestimatesbyresidenceandcounty(county);
+            }else if (report.matches("hardcore estimates by residence and county")){
+                label_1 = "Headcount Rate";
+                label_2 = "Distribution of Poor";
+                label_3 = "Poverty Gap";
+                label_4 = "Severity of Poverty";
+                yLabel.setText("Percent");
+                list = databasePoverty.gethardcoreestimatesbyresidenceandcounty(county);
+            }else if (report.matches("overall estimates by residence and county")){
+                label_1 = "Headcount Rate";
+                label_2 = "Distribution of Poor";
+                label_3 = "Poverty Gap";
+                label_4 = "Severity of Poverty";
+                yLabel.setText("Percent");
+                list = databasePoverty.geoverallestimatesbyresidenceandcounty(county);
+            }else if (report.matches("distribution of household food consumption")){
+                label_1 = "Purchases";
+                label_2 = "Stock";
+                label_3 = "Own Production";
+                label_4 = "Gifts";
+                yLabel.setText("Percent");
+                list = databasePoverty.getdistributionofhouseholdfoodconsumption(county);
+            }else if (report.matches("Death")){
                 label_1 = "Cancer";
                 label_2 = "HIV/AIDS";
                 label_3 = "Malaria";
@@ -2551,6 +2606,7 @@ public class ReportGraph extends AppCompatActivity {
                 ||report.matches("population that didnt use internet byreason")
                 ||report.matches("population that used internet by purpose")
                 ||report.matches("population who used internet by place")
+                ||report.matches("consumption expenditure and quintile distribution")
                 ){
 
             if(report.matches("Environmental Natural Resources Trends")){
@@ -2649,6 +2705,14 @@ public class ReportGraph extends AppCompatActivity {
                 label_5 = "Another's Home";
                 yLabel.setText("Percent");
                 list = databaseICT.getpopulationwhousedinternetbyplace(county);
+            }else if (report.matches("consumption expenditure and quintile distribution")) {
+                label_1 = "Quintile 1";
+                label_2 = "Quintile 2";
+                label_3 = "Quintile 3";
+                label_4 = "Quintile 4";
+                label_5 = "Quintile 5";
+                yLabel.setText("Percent");
+                list = databasePoverty.getconsumptionexpenditureandquintiledistribution(county);
             }
 
             if (list != null) {
